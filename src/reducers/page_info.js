@@ -17,11 +17,60 @@ const switchType = {
         return state;
     },
 
-    [ActionType.SET_COVER_PAGE]: (state, { num }) => {
+    [ActionType.SET_COVER_PAGE]: (state, { index }) => {
+        const coverBlobIndex = state.list.splice(index, 1);
+
+        state.list.unshift(coverBlobIndex);
+
         return state;
     },
 
-    [ActionType.ROTATE_PAGE]: (state, { num }) => {
+    [ActionType.REMOVE_PAGE]: (state, { index }) => {
+        const blobIndex = state.list.splice(index, 1);
+        BlobStore.removeBlob(blobIndex);
+        return state;
+    },
+
+    [ActionType.MOVE_TO_NEXT_PAGE]: (state, { index }) => {
+        const nextIndex = index + 1 === state.list.length ? index : index + 1;
+        const bi1 = state.list[index];
+        const bi2 = state.list[nextIndex];
+
+        state.list[index] = bi2;
+        state.list[nextIndex] = bi1;
+
+        return state;
+    },
+
+    [ActionType.MOVE_TO_PREVIOUS_PAGE]: (state, { index }) => {
+        const previousIndex = index - 1 < 0 ? 0 : index - 1;
+        const bi1 = state.list[index];
+        const bi2 = state.list[previousIndex];
+
+        state.list[index] = bi2;
+        state.list[previousIndex] = bi1;
+
+        return state;
+    },
+
+    [ActionType.CHANGE_PAGE_INDEX]: (state, { originIndex, newIndex }) => {
+        const bi1 = state.list[originIndex];
+        const bi2 = state.list[newIndex];
+
+        if (originIndex < newIndex) {
+            state.list.splice(newIndex, 1, bi2, bi1);
+            state.list.splice(originIndex, 1);
+        }
+
+        if (originIndex > newIndex) {
+            state.list.splice(originIndex, 1);
+            state.list.splice(newIndex, 1, bi1, bi2);
+        }
+
+        return state;
+    },
+
+    [ActionType.ROTATE_PAGE]: (state, { index }) => {
         return state;
     },
 

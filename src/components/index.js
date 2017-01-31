@@ -9,6 +9,12 @@ import GenerateEPUB from '../generate_epub'
 class PageCard extends Component {
     constructor(props) {
         super(props);
+
+        this.handleClickSetCover           = this.handleClickSetCover.bind(this);
+        this.handleClickRemovePage         = this.handleClickRemovePage.bind(this);
+        this.handleClickMoveToNextPage     = this.handleClickMoveToNextPage.bind(this);
+        this.handleClickMoveToPreviousPage = this.handleClickMoveToPreviousPage.bind(this);
+        this.handleClickChangePangeIndex   = this.handleClickChangePangeIndex.bind(this);
     }
 
     render() {
@@ -18,30 +24,66 @@ class PageCard extends Component {
             <div className="card" style={{marginTop: 20, background: "#f6f6f6"}}>
                 <img src={props.src} style={{alignSelf: "center"}} className="card-img-top" height="210" width="140"/>
                 <div className="card-block" style={{borderTop: "1px solid rgba(0,0,0,.125)", background: "#fff"}}>
-                    <Button color="secondary" size="sm" {...props.index === 0 ? {disabled: "true"} : {}}>
-                        <Icon name="book" />
-                    </Button>
-                    &nbsp;
-                    <Button color="secondary" size="sm" disabled="true">
-                        <Icon name="repeat" />
-                    </Button>
-                    &nbsp;
-                    <Button color="secondary" size="sm" disabled="true">
-                        <Icon name="cut" />
-                    </Button>
-                    <Button color="secondary" size="sm" float="right">
-                        <Icon name="angle-right" />
-                    </Button>
-                    <span className="float-right">&nbsp;</span>
-                    <Button color="secondary" size="sm" float="right" {...props.index === 0 ? {disabled: "true"} : {}}>
-                        <Icon name="angle-left" />
-                    </Button>
+                    <div className="btn-toolbar">
+                        <div className="btn-group">
+                            <Button color="secondary" size="sm" {...props.index === 0 ? {disabled: "true"} : {onClick: this.handleClickSetCover}}>
+                                <Icon name="book" />
+                            </Button>
+                            <Button color="secondary" size="sm" disabled="true">
+                                <Icon name="repeat" />
+                            </Button>
+                            <Button color="secondary" size="sm" disabled="true">
+                                <Icon name="cut" />
+                            </Button>
+                            <Button color="secondary" size="sm" onClick={this.handleClickRemovePage}>
+                                <Icon name="times" />
+                            </Button>
+                        </div>
+                        &nbsp;
+                        <div className="btn-group">
+                            <Button color="secondary" size="sm" {...props.index === 0 ? {disabled: "true"} : {onClick: this.handleClickMoveToPreviousPage}}>
+                                <Icon name="angle-left" />
+                            </Button>
+                            <Button color="secondary" size="sm" onClick={this.handleClickMoveToNextPage}>
+                                <Icon name="angle-right" />
+                            </Button>
+                        </div>
+                    </div>
                 </div>
-                <div className="card-footer text-center">
-                    <div className="card-text text-muted" style={{cursor: "default"}}>{props.index === 0 ? "Cover" : props.index}</div>
+                <div className="card-footer text-center" onClick={this.handleClickChangePangeIndex}>
+                    <div className="card-text text-muted" style={{cursor: "default"}}>{props.index === 0 ? "Cover" : props.index + 1}</div>
                 </div>
             </div>
         )
+    }
+
+    handleClickSetCover() {
+        const { Action, index } = this.props;
+        Action.setCover(index);
+    }
+
+    handleClickRemovePage() {
+        const { Action, index } = this.props;
+        Action.removePage(index);
+    }
+
+    handleClickMoveToNextPage() {
+        const { Action, index } = this.props;
+        Action.moveToNextPage(index);
+    }
+
+    handleClickMoveToPreviousPage() {
+        const { Action, index } = this.props;
+        Action.moveToPreviousPage(index);
+    }
+
+    handleClickChangePangeIndex() {
+        const { Action, index } = this.props;
+        const newIndex = Number(prompt("New Index (number only) :"));
+        
+        if (!isNaN(newIndex) && newIndex > 0) {
+            Action.changePageIndex(index, newIndex - 1);
+        }
     }
 }
 
@@ -362,7 +404,12 @@ class Main extends Component {
 
         State.pageInfo.list.map((fileIndex, i) => {
             colContent.push(
-                <PageCard key={rowNum + "-" + colCount} src={BlobStore.getObjectURL(fileIndex)} index={i} />
+                <PageCard
+                    key={rowNum + "-" + colCount}
+                    src={BlobStore.getObjectURL(fileIndex)} 
+                    index={i}
+                    Action={Action}
+                />
             );
 
             if (i === maxIndex) {
