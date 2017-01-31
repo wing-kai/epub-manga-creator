@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="{{language}}" prefix="rendition: http://www.idpf.org/vocab/rendition/#" unique-identifier="ootuya-id">
+      <metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
+            <dc:identifier id="ootuya-id">urn:uuid:{{uuid}}</dc:identifier>
+            <dc:title>{{title}}</dc:title>
+            <dc:language>{{language}}</dc:language>
+            <dc:subject>{{subject}}</dc:subject>
+            <dc:creator>{{creator}}</dc:creator>
+            <dc:publisher></dc:publisher>
+            <dc:rights></dc:rights>
+            <meta property="dcterms:modified">{{createTime}}</meta>
+            <meta property="rendition:layout">pre-paginated</meta>
+            <meta property="rendition:orientation">portrait</meta>
+            <meta property="rendition:spread">landscape</meta>
+      </metadata>
+      <manifest>
+            <item id="default-style" href="css/default.css" media-type="text/css"/>
+            <item id="en-style" href="css/en.css" media-type="text/css"/>
+            <item id="ja-jp-style" href="css/ja-jp.css" media-type="text/css"/>
+            <!-- image item -->
+            <item id="toc" properties="nav" href="xhtml/toc.xhtml" media-type="application/xhtml+xml"/>
+            <!-- page.xhtml item -->
+            <item id="ncxtoc" href="xhtml/toc.ncx" media-type="application/x-dtbncx+xml"/>
+      </manifest>
+      <spine toc="ncxtoc" page-progression-direction="rtl">
+            <!-- image item ref -->
+      </spine>
+</package>
