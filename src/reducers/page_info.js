@@ -23,6 +23,12 @@ const switchType = {
 
     [ActionType.ROTATE_PAGE]: (state, { num }) => {
         return state;
+    },
+
+    [ActionType.SAVE_VIEWPORT_SETTING]: (state, { data }) => {
+        state.viewport = data;
+
+        return state;
     }
 }
 

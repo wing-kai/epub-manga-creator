@@ -120,7 +120,7 @@ const generateEPUB = function(State) {
             const anchor = document.createElement("a");
             const objectURL = window.URL.createObjectURL(blob);
 
-            anchor.download = "manga.epub";
+            anchor.download = State.mangaInfo.global.title.trim() + ".epub";
             // anchor.download = "manga.zip";
             anchor.href = objectURL;
             anchor.click();

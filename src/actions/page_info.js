@@ -3,6 +3,7 @@ import BlobStore from '../blob_store'
 
 const ActionType = {
     IMPORT_PAGES: "IMPORT_PAGES",
+    SAVE_VIEWPORT_SETTING: "SAVE_VIEWPORT_SETTING",
     SET_COVER_PAGE: "SET_COVER_PAGE",
     ROTATE: "ROTATE_PAGE",
     MOVE_TO_NEXT_PAGE: "MOVE_TO_NEXT_PAGE",
@@ -23,6 +24,8 @@ const importPages = filesList => {
         newFileIndexList
     }
 }
+
+const saveViewportSetting = data => ({ type: ActionType.SAVE_VIEWPORT_SETTING, data });
 
 // 设置封面
 const setCover = transferPageNumber(ActionType.SET_COVER_PAGE);
@@ -47,5 +50,6 @@ export default {
     setCover,
     moveToNextPage,
     moveToPreviousPage,
-    cutPage
+    cutPage,
+    saveViewportSetting
 }

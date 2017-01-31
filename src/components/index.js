@@ -50,7 +50,8 @@ class ControlBar extends Component {
         super(props);
 
         this.state = {
-            firstUpload: true
+            firstUpload: true,
+            generating: false
         }
 
         this.handleClickUploadButton = this.handleClickUploadButton.bind(this);
@@ -66,11 +67,11 @@ class ControlBar extends Component {
                     <div className="card card-default">
                         <div className="card-block">
                             <p className="card-text" style={{cursor:"default"}}>
-                                <Button color="primary" onClick={this.handleClickUploadButton}>
+                                <Button color="primary" onClick={this.handleClickUploadButton} title="update images">
                                     <Icon name="upload" fw="true" />
                                 </Button>
                                 &nbsp;
-                                <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleGlobalInfoPanel}>
+                                <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleGlobalInfoPanel} title="edit book info">
                                     <Icon name="edit" fw="true" />
                                 </Button>
                                 &nbsp;
@@ -78,7 +79,7 @@ class ControlBar extends Component {
                                     <Icon name="square-o" fw="true" />
                                 </Button>
                                 &nbsp;
-                                <Button color="secondary" disabled="true">
+                                <Button color="secondary" disabled="true" title="edit contents">
                                     <Icon name="list-ul" fw="true" />
                                 </Button>
                                 &nbsp;
@@ -86,12 +87,20 @@ class ControlBar extends Component {
                                     <Icon name="cut" fw="true" disabled="true" />
                                 </Button>
                                 &nbsp;
-                                <Button color="secondary" disabled="true">
+                                <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleViewportPanel} title="edit view setting">
                                     <Icon name="eye" fw="true" />
                                 </Button>
-                                <Button color="success" float="right" onClick={this.handleClickGenerateButton}>
-                                    <Icon name="download" fw="true" />
-                                </Button>
+                                {
+                                    state.generating ? (
+                                        <Button color="secondary" float="right" disabled="true">
+                                            <span className="fa fa-spinner fa-pulse"></span>
+                                        </Button>
+                                    ) : (
+                                        <Button color="success" float="right" onClick={this.handleClickGenerateButton}>
+                                            <Icon name="download" fw="true" />
+                                        </Button>
+                                    )
+                                }
                             </p>
                         </div>
                     </div>
@@ -128,7 +137,19 @@ class ControlBar extends Component {
     }
 
     handleClickGenerateButton() {
-        GenerateEPUB(this.props.State)
+        const component = this;
+        const { Action } = this.props;
+
+        new Promise(resolve => component.setState({
+            generating: true
+        }, resolve)).then(() => {
+            return GenerateEPUB(component.props.State)
+        }).then(() => {
+            Action.updateUUID();
+            component.setState({
+                generating: false
+            });
+        });
     }
 }
 
@@ -259,17 +280,72 @@ class EditBookInfoPanel extends Component {
     }
 }
 
+class EditViewportPanel extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleClickSaveButton = this.handleClickSaveButton.bind(this);
+    }
+
+    render() {
+        return (
+            <Row>
+                <div className="col">
+                    <div className="card">
+                        <div className="card-header">viewport</div>
+                        <div className="card-block">
+                            <Row>
+                                <div className="col">
+                                    <div className="form-group row">
+                                        <label className="col-2 col-form-label">Width&nbsp;(px)</label>
+                                        <div className="col-10">
+                                            <input ref="g_width" defaultValue={this.props.width} className="form-control" type="number"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col">
+                                    <div className="form-group row">
+                                        <label className="col-2 col-form-label">Height&nbsp;(px)</label>
+                                        <div className="col-10">
+                                            <input ref="g_height" defaultValue={this.props.height} className="form-control" type="number"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Row>
+                        </div>
+                        <div className="card-footer">
+                            <Button color="primary" onClick={this.handleClickSaveButton}>
+                                Save
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </Row>
+        )
+    }
+
+    handleClickSaveButton() {
+        const height = Number(this.refs.g_height.value);
+        const width = Number(this.refs.g_width.value);
+
+        this.props.handleSaveViewportInfo({ height, width });
+    }
+}
+
 class Main extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             showBookInfoPanel: false,
+            showViewportPanel: false,
             showNCXPanel: false
         }
 
         this.handleToggleGlobalInfoPanel = this.handleToggleGlobalInfoPanel.bind(this);
         this.handleSaveGlobalInfo = this.handleSaveGlobalInfo.bind(this);
+        this.handleToggleViewportPanel = this.handleToggleViewportPanel.bind(this);
+        this.handleSaveViewportInfo = this.handleSaveViewportInfo.bind(this);
     }
 
     render() {
@@ -327,8 +403,14 @@ class Main extends Component {
                         Action={Action}
                         State={State}
                         handleToggleGlobalInfoPanel={this.handleToggleGlobalInfoPanel}
+                        handleToggleViewportPanel={this.handleToggleViewportPanel}
                     />
                     <p />
+                    {
+                        this.state.showViewportPanel
+                        ? [<EditViewportPanel key="EditViewportPanel" handleSaveViewportInfo={this.handleSaveViewportInfo} {...State.pageInfo.viewport} />, <p key="p" />]
+                        : undefined
+                    }
                     {
                         this.state.showBookInfoPanel
                         ? [<EditBookInfoPanel key="EditBookInfoPanel" handleSaveGlobalInfo={this.handleSaveGlobalInfo} {...State.mangaInfo.global} />, <p key="p" />]
@@ -358,7 +440,15 @@ class Main extends Component {
 
     handleToggleGlobalInfoPanel() {
         this.setState({
-            showBookInfoPanel: !this.state.showBookInfoPanel
+            showBookInfoPanel: !this.state.showBookInfoPanel,
+            showViewportPanel: false
+        });
+    }
+
+    handleToggleViewportPanel() {
+        this.setState({
+            showBookInfoPanel: false,
+            showViewportPanel: !this.state.showViewportPanel
         });
     }
 
@@ -368,6 +458,14 @@ class Main extends Component {
         });
 
         this.props.Action.saveGlobalSetting(data);
+    }
+
+    handleSaveViewportInfo(data) {
+        this.setState({
+            showViewportPanel: false
+        });
+
+        this.props.Action.saveViewportSetting(data);
     }
 }
 
