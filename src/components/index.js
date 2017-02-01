@@ -99,8 +99,9 @@ class ControlBar extends Component {
             generating: false
         }
 
-        this.handleClickUploadButton = this.handleClickUploadButton.bind(this);
+        this.handleClickUploadButton   = this.handleClickUploadButton.bind(this);
         this.handleClickGenerateButton = this.handleClickGenerateButton.bind(this);
+        this.handleClickAddBlankPage   = this.handleClickAddBlankPage.bind(this);
     }
 
     render() {
@@ -121,7 +122,7 @@ class ControlBar extends Component {
                                         <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleGlobalInfoPanel} title="edit book info">
                                             <Icon name="edit" fw="true" />
                                         </Button>
-                                        <Button color="secondary" disabled="true">
+                                        <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={this.handleClickAddBlankPage} title="add blank page">
                                             <Icon name="square-o" fw="true" />
                                         </Button>
                                         <Button color="secondary" disabled="true" title="edit contents">
@@ -192,6 +193,14 @@ class ControlBar extends Component {
                 generating: false
             });
         });
+    }
+
+    handleClickAddBlankPage() {
+        const targetIndex = Number(prompt("index: (number only)"));
+
+        if (!isNaN(targetIndex) && targetIndex > 0) {
+            this.props.Action.addBlankPage(targetIndex - 1);
+        }
     }
 }
 
@@ -283,8 +292,9 @@ class EditBookInfoPanel extends Component {
                                             <datalist id='datalist_subject'>
                                                 <option value="少年" />
                                                 <option value="靑年" />
-                                                <option value="成年コミック" />
                                                 <option value="同人誌" />
+                                                <option value="漫画" />
+                                                <option value="成年コミック" />
                                             </datalist>
                                         </div>
                                     </div>

@@ -76,6 +76,12 @@ const switchType = {
         return state;
     },
 
+    [ActionType.ADD_BLANK_PAGE]: (state, { index, newBlobIndex }) => {
+        const blobIndex = state.list[index];
+        state.list.splice(index, 1, newBlobIndex, blobIndex);
+        return state;
+    },
+
     [ActionType.SAVE_VIEWPORT_SETTING]: (state, { data }) => {
         state.viewport = data;
 

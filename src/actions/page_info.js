@@ -9,6 +9,7 @@ const ActionType = {
     MOVE_TO_PREVIOUS_PAGE: "MOVE_TO_PREVIOUS_PAGE",
     CHANGE_PAGE_INDEX: "CHANGE_PAGE_INDEX",
     "REMOVE_PAGE": "REMOVE_PAGE",
+    ADD_BLANK_PAGE: "ADD_BLANK_PAGE",
     CUT_PAGE: "CUT_PAGE"
 }
 
@@ -91,10 +92,32 @@ const cutPage = index => (dispatch, getState) => {
     image.src = BlobStore.getObjectURL(blobIndex);
 };
 
+const addBlankPage = index => dispatch => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = 1;
+    canvas.height = 1;
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, 1, 1);
+    ctx.beginPath();
+
+    canvas.toBlob(blob => {
+        const newBlobIndex = BlobStore.importBlob(blob);
+
+        dispatch({
+            type: ActionType.ADD_BLANK_PAGE,
+            index,
+            newBlobIndex
+        });
+    }, "image/png");
+}
+
 export { ActionType }
 
 export default {
     importPages,
+    addBlankPage,
     setCover,
     moveToNextPage,
     moveToPreviousPage,
