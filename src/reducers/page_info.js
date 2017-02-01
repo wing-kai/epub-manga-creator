@@ -72,7 +72,7 @@ const switchType = {
 
     [ActionType.CUT_PAGE]: (state, { index, newBlobIndex }) => {
         const blobIndex = state.list[index];
-        state.list.splice(index, 1, blobIndex, newBlobIndex);
+        state.list.splice(index, 1, newBlobIndex, blobIndex);
         return state;
     },
 

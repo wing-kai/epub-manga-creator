@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import clone from 'clone'
+
 import ActionCreators from '../actions'
 import BlobStore from '../blob_store'
-import { Button, Icon, Row } from './common'
 import GenerateEPUB from '../generate_epub'
+import { Button, Icon, Row } from './common'
+import { ContentItem, EditContentPanel } from './contents'
 
 class PageCard extends Component {
     constructor(props) {
@@ -119,16 +122,32 @@ class ControlBar extends Component {
                                 &nbsp;
                                 <div className="btn-toolbar" style={{display: "inline-block"}}>
                                     <div className="btn-group">
-                                        <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleGlobalInfoPanel} title="edit book info">
+                                        <Button
+                                            color="secondary"
+                                            title="edit book info"
+                                            {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleGlobalInfoPanel}
+                                        >
                                             <Icon name="edit" fw="true" />
                                         </Button>
-                                        <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={this.handleClickAddBlankPage} title="add blank page">
+                                        <Button
+                                            color="secondary"
+                                            title="add blank page"
+                                            {...state.firstUpload ? {disabled: "true"} : {}} onClick={this.handleClickAddBlankPage}
+                                        >
                                             <Icon name="square-o" fw="true" />
                                         </Button>
-                                        <Button color="secondary" disabled="true" title="edit contents">
+                                        <Button
+                                            color="secondary"
+                                            title="edit contents"
+                                            {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleContentsPanel}
+                                        >
                                             <Icon name="list-ul" fw="true" />
                                         </Button>
-                                        <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleViewportPanel} title="edit view setting">
+                                        <Button
+                                            color="secondary"
+                                            title="edit view setting"
+                                            {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleViewportPanel}
+                                        >
                                             <Icon name="eye" fw="true" />
                                         </Button>
                                     </div>
@@ -153,10 +172,10 @@ class ControlBar extends Component {
     }
 
     handleClickUploadButton() {
-        const input = document.createElement('input');
+        const input      = document.createElement('input');
         const acceptType = 'image/jpeg,image/png';
         const { Action } = this.props;
-        const component = this;
+        const component  = this;
 
         input.type = "file";
         input.multiple = "multiple";
@@ -201,50 +220,6 @@ class ControlBar extends Component {
         if (!isNaN(targetIndex) && targetIndex > 0) {
             this.props.Action.addBlankPage(targetIndex - 1);
         }
-    }
-}
-
-class EditNCXPanel extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    render() {
-        return (
-            <Row>
-                <div className="col-8">
-                    <div className="card">
-                        <div className="card-header">NCX</div>
-                        <ul className="list-group list-group-flush">
-                            <li className="list-group-item">
-                                <div className="row" style={{flexGrow: 1}}>
-                                    <div className="col">
-                                        <input type="text" className="form-control input-sm" placeholder="title"/>
-                                    </div>
-                                    <div className="col">
-                                        <input type="number" min="1" className="form-control input-sm" placeholder="page num"/>
-                                    </div>
-                                    <div className="col" style={{display: "flex", justifyContent: "flex-end"}}>
-                                        <Button color="secondary">
-                                            <Icon name="plus" />
-                                        </Button>
-                                        &nbsp;
-                                        <Button color="secondary">
-                                            <Icon name="minus" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
-                        <div className="card-footer">
-                            <Button color="primary">
-                                Save
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </Row>
-        )
     }
 }
 
@@ -324,9 +299,9 @@ class EditBookInfoPanel extends Component {
     }
 
     handleClickSaveButton() {
-        const title = this.refs.g_title.value;
-        const creator = this.refs.g_creator.value;
-        const subject = this.refs.g_subject.value;
+        const title    = this.refs.g_title.value;
+        const creator  = this.refs.g_creator.value;
+        const subject  = this.refs.g_subject.value;
         const language = this.refs.g_language.value;
 
         this.props.handleSaveGlobalInfo({ title, creator, subject, language});
@@ -392,24 +367,26 @@ class Main extends Component {
         this.state = {
             showBookInfoPanel: false,
             showViewportPanel: false,
-            showNCXPanel: false
+            showContentsPanel: false
         }
 
         this.handleToggleGlobalInfoPanel = this.handleToggleGlobalInfoPanel.bind(this);
-        this.handleSaveGlobalInfo = this.handleSaveGlobalInfo.bind(this);
-        this.handleToggleViewportPanel = this.handleToggleViewportPanel.bind(this);
-        this.handleSaveViewportInfo = this.handleSaveViewportInfo.bind(this);
+        this.handleSaveGlobalInfo        = this.handleSaveGlobalInfo.bind(this);
+        this.handleToggleViewportPanel   = this.handleToggleViewportPanel.bind(this);
+        this.handleSaveViewportInfo      = this.handleSaveViewportInfo.bind(this);
+        this.handleToggleContentsPanel   = this.handleToggleContentsPanel.bind(this);
+        this.handleSaveContentsInfo      = this.handleSaveContentsInfo.bind(this);
     }
 
     render() {
         const { Action, State } = this.props;
 
-        let rowNum = Math.ceil(State.pageInfo.list.length / 5);
-        let blankCard = 5 - State.pageInfo.list.length % 5;
-        let colCount = 0;
+        let rowNum     = Math.ceil(State.pageInfo.list.length / 5);
+        let blankCard  = 5 - State.pageInfo.list.length % 5;
+        let colCount   = 0;
         let rowContent = [];
         let colContent = [];
-        let maxIndex = State.pageInfo.list.length - 1;
+        let maxIndex   = State.pageInfo.list.length - 1;
 
         blankCard = blankCard === 5 ? 0 : blankCard;
 
@@ -454,7 +431,14 @@ class Main extends Component {
                     <h3 className="navbar-brand" href="">
                         Epub Manga Creator
                         &nbsp;
-                        <iframe style={{border:"none"}} src="https://ghbtns.com/github-btn.html?user=wing-kai&amp;repo=epub-manga-creator&amp;type=star&amp;count=true" frameBorder="0" scrolling="0" width="170px" height="20px"></iframe>
+                        <iframe
+                            style={{border:"none"}}
+                            src="https://ghbtns.com/github-btn.html?user=wing-kai&amp;repo=epub-manga-creator&amp;type=star&amp;count=true"
+                            frameBorder="0"
+                            scrolling="0"
+                            width="170px"
+                            height="20px"
+                        />
                     </h3>
                 </nav>
                 <p />
@@ -464,16 +448,22 @@ class Main extends Component {
                         State={State}
                         handleToggleGlobalInfoPanel={this.handleToggleGlobalInfoPanel}
                         handleToggleViewportPanel={this.handleToggleViewportPanel}
+                        handleToggleContentsPanel={this.handleToggleContentsPanel}
                     />
                     <p />
                     {
-                        this.state.showViewportPanel
-                        ? [<EditViewportPanel key="EditViewportPanel" handleSaveViewportInfo={this.handleSaveViewportInfo} {...State.pageInfo.viewport} />, <p key="p" />]
+                        this.state.showBookInfoPanel
+                        ? [<EditBookInfoPanel key="EditBookInfoPanel" handleSaveGlobalInfo={this.handleSaveGlobalInfo} {...State.mangaInfo.global} />, <p key="p" />]
                         : undefined
                     }
                     {
-                        this.state.showBookInfoPanel
-                        ? [<EditBookInfoPanel key="EditBookInfoPanel" handleSaveGlobalInfo={this.handleSaveGlobalInfo} {...State.mangaInfo.global} />, <p key="p" />]
+                        this.state.showContentsPanel
+                        ? [<EditContentPanel key="EditContentPanel" contents={State.mangaInfo.contents} handleClickSaveButton={this.handleSaveContentsInfo} />, <p key="p" />]
+                        : undefined
+                    }
+                    {
+                        this.state.showViewportPanel
+                        ? [<EditViewportPanel key="EditViewportPanel" handleSaveViewportInfo={this.handleSaveViewportInfo} {...State.pageInfo.viewport} />, <p key="p" />]
                         : undefined
                     }
                     <Row>
@@ -498,14 +488,24 @@ class Main extends Component {
     handleToggleGlobalInfoPanel() {
         this.setState({
             showBookInfoPanel: !this.state.showBookInfoPanel,
-            showViewportPanel: false
+            showViewportPanel: false,
+            showContentsPanel: false
         });
     }
 
     handleToggleViewportPanel() {
         this.setState({
             showBookInfoPanel: false,
-            showViewportPanel: !this.state.showViewportPanel
+            showViewportPanel: !this.state.showViewportPanel,
+            showContentsPanel: false
+        });
+    }
+
+    handleToggleContentsPanel() {
+        this.setState({
+            showBookInfoPanel: false,
+            showViewportPanel: false,
+            showContentsPanel: !this.state.showContentsPanel
         });
     }
 
@@ -524,9 +524,22 @@ class Main extends Component {
 
         this.props.Action.saveViewportSetting(data);
     }
+
+    handleSaveContentsInfo(data) {
+        this.setState({
+            showContentsPanel: false
+        });
+
+        this.props.Action.saveContentsSetting(data);
+    }
 }
 
 export default connect(
-  ({ mangaInfo, pageInfo }) => ({ State: { mangaInfo, pageInfo } }),
-  dispatch => ({ Action: bindActionCreators({...ActionCreators.pageInfo, ...ActionCreators.mangaInfo} ,dispatch) })
+    ({ mangaInfo, pageInfo }) => ({ State: { mangaInfo, pageInfo } }),
+    dispatch => ({
+        Action: bindActionCreators(
+            {...ActionCreators.pageInfo, ...ActionCreators.mangaInfo},
+            dispatch
+        )
+    })
 )(Main);

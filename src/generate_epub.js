@@ -13,8 +13,8 @@ const generateEPUB = function(State) {
     // render toc.ncx file
 
     let file_ncx = Template["toc.ncx"];
-    const navMapStr = State.mangaInfo.ncx.map((navPointInfo, index) => (
-        '<ncx:navPoint id="p' + navPointInfo.pageNum + '" playOrder="' + (index + 1) + '"><ncx:navLabel><ncx:text>' + navPointInfo.text + '</ncx:text></ncx:navLabel><ncx:content src="p' + navPointInfo.pageNum + '.xhtml"/></ncx:navPoint>'
+    const navMapStr = State.mangaInfo.contents.map((navPointInfo, index) => (
+        '<ncx:navPoint id="p' + navPointInfo.refindex + '" playOrder="' + (index + 1) + '"><ncx:navLabel><ncx:text>' + navPointInfo.text + '</ncx:text></ncx:navLabel><ncx:content src="p' + navPointInfo.refindex + '.xhtml"/></ncx:navPoint>'
     )).join('');
 
     file_ncx = file_ncx
@@ -27,8 +27,8 @@ const generateEPUB = function(State) {
 
     let file_toc_xhtml = Template["toc.xhtml"];
 
-    const tocListStr = State.mangaInfo.ncx.map((navPointInfo, index) => (
-        '<li epub:type="chapter" id="toc-' + (index + 1) + '"><a href="p' + navPointInfo.pageNum + '.xhtml">' + navPointInfo.text + '</a></li>'
+    const tocListStr = State.mangaInfo.contents.map((navPointInfo, index) => (
+        '<li epub:type="chapter" id="toc-' + (index + 1) + '"><a href="p' + navPointInfo.refindex + '.xhtml">' + navPointInfo.text + '</a></li>'
     )).join('');
 
     // cover & list string

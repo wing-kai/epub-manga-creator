@@ -27,8 +27,8 @@ const initialState = {
         language: ""
     },
     ncxTitle: "目次/Table of Contents",
-    ncx: [{
-        pageNum: 1,
+    contents: [{
+        refindex: 1,
         text: "表紙"
     }]
 }
@@ -46,8 +46,8 @@ const switchType = {
         return state;
     },
 
-    [ActionType.SAVE_NCX_SETTING]: (state, { data }) => {
-        state.ncx = data;
+    [ActionType.SAVE_CONTENTS_SETTING]: (state, { data }) => {
+        state.contents = data;
 
         return state;
     }
