@@ -70,7 +70,9 @@ const switchType = {
         return state;
     },
 
-    [ActionType.ROTATE_PAGE]: (state, { index }) => {
+    [ActionType.CUT_PAGE]: (state, { index, newBlobIndex }) => {
+        const blobIndex = state.list[index];
+        state.list.splice(index, 1, blobIndex, newBlobIndex);
         return state;
     },
 

@@ -19,7 +19,19 @@ const importFiles = filesList => {
     return keyList;
 }
 
-const updateFile = (index, blob) => {
+const importBlob = blob => {
+    const newIndex = indexCount;
+    _fileList[newIndex] = {
+        blob,
+        objectURL: window.URL.createObjectURL(blob)
+    }
+
+    indexCount = indexCount + 1;
+
+    return newIndex;
+}
+
+const updateBlob = (index, blob) => {
     const i = String(index);
 
     window.URL.revokeObjectURL(_fileList[i].objectURL);
@@ -54,9 +66,10 @@ const removeBlob = index => {
 }
 
 export default {
+    importBlob,
     removeAllBlob,
     getLength,
-    updateFile,
+    updateBlob,
     importFiles,
     getObjectURL,
     getBlobObject,

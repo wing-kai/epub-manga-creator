@@ -15,6 +15,7 @@ class PageCard extends Component {
         this.handleClickMoveToNextPage     = this.handleClickMoveToNextPage.bind(this);
         this.handleClickMoveToPreviousPage = this.handleClickMoveToPreviousPage.bind(this);
         this.handleClickChangePangeIndex   = this.handleClickChangePangeIndex.bind(this);
+        this.handleClickCutPage            = this.handleClickCutPage.bind(this);
     }
 
     render() {
@@ -29,10 +30,7 @@ class PageCard extends Component {
                             <Button color="secondary" size="sm" {...props.index === 0 ? {disabled: "true"} : {onClick: this.handleClickSetCover}}>
                                 <Icon name="book" />
                             </Button>
-                            <Button color="secondary" size="sm" disabled="true">
-                                <Icon name="repeat" />
-                            </Button>
-                            <Button color="secondary" size="sm" disabled="true">
+                            <Button color="secondary" size="sm" onClick={this.handleClickCutPage}>
                                 <Icon name="cut" />
                             </Button>
                             <Button color="secondary" size="sm" onClick={this.handleClickRemovePage}>
@@ -77,6 +75,11 @@ class PageCard extends Component {
         Action.moveToPreviousPage(index);
     }
 
+    handleClickCutPage() {
+        const { Action, index } = this.props;
+        Action.cutPage(index);
+    }
+
     handleClickChangePangeIndex() {
         const { Action, index } = this.props;
         const newIndex = Number(prompt("New Index (number only) :"));
@@ -108,30 +111,27 @@ class ControlBar extends Component {
                 <div className="col">
                     <div className="card card-default">
                         <div className="card-block">
-                            <p className="card-text" style={{cursor:"default"}}>
+                            <div className="card-text" style={{cursor:"default"}}>
                                 <Button color="primary" onClick={this.handleClickUploadButton} title="update images">
                                     <Icon name="upload" fw="true" />
                                 </Button>
                                 &nbsp;
-                                <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleGlobalInfoPanel} title="edit book info">
-                                    <Icon name="edit" fw="true" />
-                                </Button>
-                                &nbsp;
-                                <Button color="secondary" disabled="true">
-                                    <Icon name="square-o" fw="true" />
-                                </Button>
-                                &nbsp;
-                                <Button color="secondary" disabled="true" title="edit contents">
-                                    <Icon name="list-ul" fw="true" />
-                                </Button>
-                                &nbsp;
-                                <Button color="secondary" disabled="true">
-                                    <Icon name="cut" fw="true" disabled="true" />
-                                </Button>
-                                &nbsp;
-                                <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleViewportPanel} title="edit view setting">
-                                    <Icon name="eye" fw="true" />
-                                </Button>
+                                <div className="btn-toolbar" style={{display: "inline-block"}}>
+                                    <div className="btn-group">
+                                        <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleGlobalInfoPanel} title="edit book info">
+                                            <Icon name="edit" fw="true" />
+                                        </Button>
+                                        <Button color="secondary" disabled="true">
+                                            <Icon name="square-o" fw="true" />
+                                        </Button>
+                                        <Button color="secondary" disabled="true" title="edit contents">
+                                            <Icon name="list-ul" fw="true" />
+                                        </Button>
+                                        <Button color="secondary" {...state.firstUpload ? {disabled: "true"} : {}} onClick={props.handleToggleViewportPanel} title="edit view setting">
+                                            <Icon name="eye" fw="true" />
+                                        </Button>
+                                    </div>
+                                </div>
                                 {
                                     state.generating ? (
                                         <Button color="secondary" float="right" disabled="true">
@@ -143,7 +143,7 @@ class ControlBar extends Component {
                                         </Button>
                                     )
                                 }
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -284,6 +284,7 @@ class EditBookInfoPanel extends Component {
                                                 <option value="少年" />
                                                 <option value="靑年" />
                                                 <option value="成年コミック" />
+                                                <option value="同人誌" />
                                             </datalist>
                                         </div>
                                     </div>
@@ -442,6 +443,8 @@ class Main extends Component {
                 <nav className="navbar navbar-light bg-faded">
                     <h3 className="navbar-brand" href="">
                         Epub Manga Creator
+                        &nbsp;
+                        <iframe style={{border:"none"}} src="https://ghbtns.com/github-btn.html?user=wing-kai&amp;repo=epub-manga-creator&amp;type=star&amp;count=true" frameBorder="0" scrolling="0" width="170px" height="20px"></iframe>
                     </h3>
                 </nav>
                 <p />
@@ -476,9 +479,6 @@ class Main extends Component {
                         </div>
                     </Row>
                     <p></p>
-                    <p className="text-muted">
-                        <span className="float-right">wing-kai's work</span>
-                    </p>
                     <p>&nbsp;</p>
                 </div>
             </div>

@@ -5,7 +5,6 @@ const ActionType = {
     IMPORT_PAGES: "IMPORT_PAGES",
     SAVE_VIEWPORT_SETTING: "SAVE_VIEWPORT_SETTING",
     SET_COVER_PAGE: "SET_COVER_PAGE",
-    ROTATE: "ROTATE_PAGE",
     MOVE_TO_NEXT_PAGE: "MOVE_TO_NEXT_PAGE",
     MOVE_TO_PREVIOUS_PAGE: "MOVE_TO_PREVIOUS_PAGE",
     CHANGE_PAGE_INDEX: "CHANGE_PAGE_INDEX",
@@ -33,9 +32,6 @@ const removePage = transferPageNumber(ActionType.REMOVE_PAGE);
 // 设置封面
 const setCover = transferPageNumber(ActionType.SET_COVER_PAGE);
 
-// 旋转图片（页面）
-const rotatePage = transferPageNumber(ActionType.ROTATE_PAGE);
-
 // 向后调整页码
 const moveToNextPage = transferPageNumber(ActionType.MOVE_TO_NEXT_PAGE);
 
@@ -49,12 +45,55 @@ const changePageIndex = (originIndex, newIndex) => ({
 });
 
 // 宽页分割
-const cutPage = transferPageNumber(ActionType.CUT_PAGE);
+const cutPage = index => (dispatch, getState) => {
+
+    const blobIndex = getState().pageInfo.list[index];
+    const mimetype = BlobStore.getBlobObject(blobIndex).type;
+    const image = new Image();
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext('2d');
+    const newBlob = [];
+
+    new Promise(resolve => {
+        image.onload = resolve
+    }).then(e => {
+        canvas.width = image.width / 2;
+        canvas.height = image.height;
+
+        ctx.drawImage(image, 0, 0);
+
+        return new Promise(resolve => {
+            canvas.toBlob(blob => {
+                newBlob.push(blob);
+                resolve();
+            }, mimetype);
+        });
+    }).then(() => {
+        ctx.drawImage(image, 0 - canvas.width, 0);
+
+        return new Promise(resolve => {
+            canvas.toBlob(blob => {
+                newBlob.push(blob);
+                resolve();
+            }, mimetype);
+        });
+    }).then(() => {
+        BlobStore.updateBlob(blobIndex, newBlob[0]);
+        const newBlobIndex = BlobStore.importBlob(newBlob[1]);
+
+        dispatch({
+            type: ActionType.CUT_PAGE,
+            index,
+            newBlobIndex
+        });
+    });
+
+    image.src = BlobStore.getObjectURL(blobIndex);
+};
 
 export { ActionType }
 
 export default {
-    rotatePage,
     importPages,
     setCover,
     moveToNextPage,
