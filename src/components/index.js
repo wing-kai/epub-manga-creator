@@ -313,9 +313,18 @@ class EditViewportPanel extends Component {
         super(props);
 
         this.handleClickSaveButton = this.handleClickSaveButton.bind(this);
+        this.handleSetPosition = this.handleSetPosition.bind(this);
+        this.handleSetBackgroundColor = this.handleSetBackgroundColor.bind(this);
+
+        this.state = {
+            position: props.position,
+            color: props.backgroundColor
+        }
     }
 
     render() {
+        const { position, color } = this.state;
+
         return (
             <Row>
                 <div className="col">
@@ -340,6 +349,53 @@ class EditViewportPanel extends Component {
                                     </div>
                                 </div>
                             </Row>
+                            <p></p>
+                            <Row>
+                                <div className="col-8">
+                                    <div className="card-group">
+                                        <div className="card ">
+                                            <img src="images/exp4.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
+                                            <div className="card-footer text-center text-muted">
+                                                <Button color={position === "stretch" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="stretch">Stretch</Button>
+                                            </div>
+                                        </div>
+                                        <div className="card">
+                                            <img src="images/exp1.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
+                                            <div className="card-footer text-center text-muted">
+                                                <Button color={position === "fill" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="fill">Fill</Button>
+                                            </div>
+                                        </div>
+                                        <div className="card">
+                                            <img src="images/exp2.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
+                                            <div className="card-footer text-center text-muted">
+                                                <Button color={position === "fit" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="fit">Fit</Button>
+                                            </div>
+                                        </div>
+                                        <div className="card">
+                                            <img src="images/exp3.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
+                                            <div className="card-footer text-center text-muted">
+                                                <Button color={position === "center" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="center">Center</Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-4">
+                                    <div className="card-group">
+                                        <div className="card">
+                                            <img src="images/exp5.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
+                                            <div className="card-footer text-center text-muted">
+                                                <Button color={color === "black" ? "info" : "secondary"} onClick={this.handleSetBackgroundColor} size="sm" data-color="black">Black</Button>
+                                            </div>
+                                        </div>
+                                        <div className="card">
+                                            <img src="images/exp3.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
+                                            <div className="card-footer text-center text-muted">
+                                                <Button color={color === "white" ? "info" : "secondary"} onClick={this.handleSetBackgroundColor} size="sm" data-color="white">White</Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Row>
                         </div>
                         <div className="card-footer">
                             <Button color="primary" onClick={this.handleClickSaveButton}>
@@ -356,7 +412,22 @@ class EditViewportPanel extends Component {
         const height = Number(this.refs.g_height.value);
         const width = Number(this.refs.g_width.value);
 
-        this.props.handleSaveViewportInfo({ height, width });
+        this.props.handleSaveViewportInfo({
+            height,
+            width,
+            position: this.state.position,
+            backgroundColor: this.state.color
+        });
+    }
+
+    handleSetPosition(e) {
+        const position = e.currentTarget.dataset.position;
+        this.setState({ position });
+    }
+
+    handleSetBackgroundColor(e) {
+        const color = e.currentTarget.dataset.color;
+        this.setState({ color });
     }
 }
 

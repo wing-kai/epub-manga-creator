@@ -6,9 +6,9 @@ const generateEPUB = function(State) {
     const Zip = new JSZip();
 
     Zip.folder("META-INF");
-    Zip.folder("OPS/css");
     Zip.folder("OPS/images");
     Zip.folder("OPS/xhtml");
+    Zip.folder("OPS/css");
 
     // render toc.ncx file
 
@@ -80,6 +80,8 @@ const generateEPUB = function(State) {
         .replace(new RegExp("<!-- page.xhtml item -->", "gm"), pageItemStr)
         .replace(new RegExp("<!-- image item ref -->", "gm"), itemrefStr)
 
+    // render page.xhtml file
+
     const files_page = {};
     State.pageInfo.list.map((blobIndex, index) => {
         files_page["p" + (index + 1) + ".xhtml"] = Template['page.xhtml']
@@ -87,16 +89,15 @@ const generateEPUB = function(State) {
             .replace("{{title}}", State.mangaInfo.global.title)
             .replace("{{viewport}}", "width=" + State.pageInfo.viewport.width + ",height=" + State.pageInfo.viewport.height)
             .replace("{{image file src}}", "../images/" + (index + 1) + '.' + String(BlobStore.getBlobObject(blobIndex).type).slice(6))
+            .replace("{{position}}", State.pageInfo.viewport.position)
+            .replace("{{backgroundColor}}", "bg-" + State.pageInfo.viewport.backgroundColor)
     });
 
     // Add file to zip object
 
     Zip.file("mimetype", Template.mimetype);
     Zip.file("META-INF/container.xml", Template["container.xml"]);
-
-    Zip.file("OPS/css/default.css", Template["default.css"]);
-    Zip.file("OPS/css/en.css", Template["en.css"]);
-    Zip.file("OPS/css/ja-jp.css", Template["ja-jp.css"]);
+    Zip.file("OPS/css/page.css", Template["page.css"]);
 
     Zip.file("OPS/xhtml/toc.ncx", file_ncx);
     Zip.file("OPS/xhtml/toc.xhtml", file_toc_xhtml);

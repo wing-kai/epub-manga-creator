@@ -6,7 +6,9 @@ const initialState = {
     firstBlankPage: true, // 首页留白
     viewport: {
         height: 1500,
-        width: 1058
+        width: 1000,
+        position: "stretch",
+        backgroundColor: "white"
     },
     list: []
 }

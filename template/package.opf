@@ -14,9 +14,7 @@
             <meta property="rendition:spread">landscape</meta>
       </metadata>
       <manifest>
-            <item id="default-style" href="css/default.css" media-type="text/css"/>
-            <item id="en-style" href="css/en.css" media-type="text/css"/>
-            <item id="ja-jp-style" href="css/ja-jp.css" media-type="text/css"/>
+            <item id="page-style" href="css/page.css" media-type="text/css"/>
             <!-- image item -->
             <item id="toc" properties="nav" href="xhtml/toc.xhtml" media-type="application/xhtml+xml"/>
             <!-- page.xhtml item -->

@@ -10,7 +10,10 @@ const ActionType = {
     CHANGE_PAGE_INDEX: "CHANGE_PAGE_INDEX",
     "REMOVE_PAGE": "REMOVE_PAGE",
     ADD_BLANK_PAGE: "ADD_BLANK_PAGE",
-    CUT_PAGE: "CUT_PAGE"
+    CUT_PAGE: "CUT_PAGE",
+
+    CHANGE_IMAGE_POSITION: "CHANGE_IMAGE_POSITION",
+    CHANGE_PAGE_BACKGROUND_COLOR: "CHANGE_PAGE_BACKGROUND_COLOR"
 }
 
 const transferPageNumber = actionStr => index => ({ type: actionStr, index })
@@ -113,6 +116,16 @@ const addBlankPage = index => dispatch => {
     }, "image/png");
 }
 
+const changeImagePosition = position => ({
+    type: ActionType.CHANGE_IMAGE_POSITION,
+    position
+});
+
+const changeBackgroundColor = color => ({
+    type: ActionType.CHANGE_PAGE_BACKGROUND_COLOR,
+    color
+});
+
 export { ActionType }
 
 export default {
@@ -124,5 +137,8 @@ export default {
     changePageIndex,
     cutPage,
     removePage,
-    saveViewportSetting
+    saveViewportSetting,
+
+    changeImagePosition,
+    changeBackgroundColor
 }
