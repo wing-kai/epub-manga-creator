@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="{{language}}" prefix="rendition: http://www.idpf.org/vocab/rendition/#" unique-identifier="ootuya-id">
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="{{language}}" prefix="rendition: http://www.idpf.org/vocab/rendition/#" unique-identifier="uuid">
       <metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/">
-            <dc:identifier id="ootuya-id">urn:uuid:{{uuid}}</dc:identifier>
+            <dc:identifier id="uuid">urn:uuid:{{uuid}}</dc:identifier>
             <dc:title>{{title}}</dc:title>
             <dc:language>{{language}}</dc:language>
             <dc:subject>{{subject}}</dc:subject>

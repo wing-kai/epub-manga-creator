@@ -1,26 +1,8 @@
-import entry from "./entry"
+import entry, { undoable } from "./entry"
 import { ActionType } from '../actions/manga_info'
-
-const generateRandomUUID = () => {
-    const char = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    let uuid = "";
-    let i = 36;
-
-    while (i-- > 0) {
-        if (i === 27 || i === 22 || i === 17 || i === 12) {
-            uuid = uuid + "-";
-        } else {
-            uuid = uuid + String(char[Math.ceil(Math.random() * 35)])
-        }
-    }
-
-    return uuid;
-}
 
 const initialState = {
     global: {
-        uuid: generateRandomUUID(),
         title: "",
         creator: "",
         subject: "",
@@ -34,14 +16,14 @@ const initialState = {
 }
 
 const switchType = {
-    [ActionType.UPDATE_UUID]: (state) => {
-        state.global.uuid = generateRandomUUID();
-
-        return state;
-    },
-
-    [ActionType.SAVE_GLOBAL_SETTING]: (state, { data }) => {
-        state.global = data;
+    [ActionType.SAVE_GLOBAL_SETTING]: (state, { title, creator, subject, language }) => {
+        state.global = {
+            ...state.global,
+            title,
+            creator,
+            subject,
+            language
+        };
 
         return state;
     },
@@ -53,4 +35,4 @@ const switchType = {
     }
 }
 
-export default entry(initialState, switchType)
+export default entry(initialState, switchType);

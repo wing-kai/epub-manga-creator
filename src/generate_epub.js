@@ -2,8 +2,26 @@ import JSZip from 'jszip'
 import BlobStore from './blob_store'
 import Template from './template'
 
+const generateRandomUUID = () => {
+    const char = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    let uuid = "";
+    let i = 36;
+
+    while (i-- > 0) {
+        if (i === 27 || i === 22 || i === 17 || i === 12) {
+            uuid = uuid + "-";
+        } else {
+            uuid = uuid + String(char[Math.ceil(Math.random() * 35)])
+        }
+    }
+
+    return uuid;
+}
+
 const generateEPUB = function(State) {
     const Zip = new JSZip();
+    const UUID = generateRandomUUID();
 
     Zip.folder("META-INF");
     Zip.folder("OPS/images");
@@ -18,7 +36,7 @@ const generateEPUB = function(State) {
     )).join('');
 
     file_ncx = file_ncx
-        .replace(new RegExp("{{uuid}}", "gm"), State.mangaInfo.global.uuid)
+        .replace(new RegExp("{{uuid}}", "gm"), UUID)
         .replace(new RegExp("{{title}}", "gm"), State.mangaInfo.global.title)
         .replace(new RegExp("{{creator}}", "gm"), State.mangaInfo.global.creator)
         .replace(new RegExp("<!-- nav map -->", "gm"), navMapStr)
@@ -62,7 +80,6 @@ const generateEPUB = function(State) {
         '<item id="p' + (index + 1) + '" href="xhtml/p' + (index + 1) + '.xhtml" media-type="application/xhtml+xml"/>'
     )).join('');
 
-    // let spread = State.pageInfo.firstBlankPage ? "right" : "left"; // 保留
     let spread = "right";
     const itemrefStr = State.pageInfo.list.map((b, index) => {
         spread = spread === "left" ? "right" : "left";
@@ -70,7 +87,7 @@ const generateEPUB = function(State) {
     }).join('');
 
     file_opf = file_opf
-        .replace(new RegExp("{{uuid}}", "gm"), State.mangaInfo.global.uuid)
+        .replace(new RegExp("{{uuid}}", "gm"), UUID)
         .replace(new RegExp("{{title}}", "gm"), State.mangaInfo.global.title)
         .replace(new RegExp("{{language}}", "gm"), State.mangaInfo.global.language)
         .replace(new RegExp("{{creator}}", "gm"), State.mangaInfo.global.creator)
@@ -121,8 +138,8 @@ const generateEPUB = function(State) {
             const anchor = document.createElement("a");
             const objectURL = window.URL.createObjectURL(blob);
 
-            anchor.download = State.mangaInfo.global.title.trim() + ".epub";
-            // anchor.download = "manga.zip";
+            // anchor.download = State.mangaInfo.global.title.trim() + ".epub";
+            anchor.download = State.mangaInfo.global.title.trim() + ".zip";
             anchor.href = objectURL;
             anchor.click();
 

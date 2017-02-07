@@ -2,17 +2,17 @@ import zip from 'jszip'
 import BlobStore from '../blob_store'
 
 const ActionType = {
-    IMPORT_PAGES: "IMPORT_PAGES",
-    SAVE_VIEWPORT_SETTING: "SAVE_VIEWPORT_SETTING",
-    SET_COVER_PAGE: "SET_COVER_PAGE",
-    MOVE_TO_NEXT_PAGE: "MOVE_TO_NEXT_PAGE",
-    MOVE_TO_PREVIOUS_PAGE: "MOVE_TO_PREVIOUS_PAGE",
-    CHANGE_PAGE_INDEX: "CHANGE_PAGE_INDEX",
-    "REMOVE_PAGE": "REMOVE_PAGE",
-    ADD_BLANK_PAGE: "ADD_BLANK_PAGE",
-    CUT_PAGE: "CUT_PAGE",
+    IMPORT_PAGES:                 "IMPORT_PAGES",
+    SAVE_VIEWPORT_SETTING:        "SAVE_VIEWPORT_SETTING",
+    SET_COVER_PAGE:               "SET_COVER_PAGE",
+    MOVE_TO_NEXT_PAGE:            "MOVE_TO_NEXT_PAGE",
+    MOVE_TO_PREVIOUS_PAGE:        "MOVE_TO_PREVIOUS_PAGE",
+    CHANGE_PAGE_INDEX:            "CHANGE_PAGE_INDEX",
+    REMOVE_PAGE:                  "REMOVE_PAGE",
+    ADD_BLANK_PAGE:               "ADD_BLANK_PAGE",
+    CUT_PAGE:                     "CUT_PAGE",
 
-    CHANGE_IMAGE_POSITION: "CHANGE_IMAGE_POSITION",
+    CHANGE_IMAGE_POSITION:        "CHANGE_IMAGE_POSITION",
     CHANGE_PAGE_BACKGROUND_COLOR: "CHANGE_PAGE_BACKGROUND_COLOR"
 }
 
@@ -51,7 +51,7 @@ const changePageIndex = (originIndex, newIndex) => ({
 // 宽页分割
 const cutPage = index => (dispatch, getState) => {
 
-    const blobIndex = getState().pageInfo.list[index];
+    const blobIndex = getState().present.pageInfo.list[index];
     const mimetype = BlobStore.getBlobObject(blobIndex).type;
     const image = new Image();
     const canvas = document.createElement("canvas");
@@ -61,7 +61,7 @@ const cutPage = index => (dispatch, getState) => {
     new Promise(resolve => {
         image.onload = resolve
     }).then(e => {
-        canvas.width = image.width / 2;
+        canvas.width = image.width >> 1;
         canvas.height = image.height;
 
         ctx.drawImage(image, 0, 0);
@@ -82,13 +82,13 @@ const cutPage = index => (dispatch, getState) => {
             }, mimetype);
         });
     }).then(() => {
-        BlobStore.updateBlob(blobIndex, newBlob[0]);
-        const newBlobIndex = BlobStore.importBlob(newBlob[1]);
+        const newBlobIndex1 = BlobStore.importBlob(newBlob[0]);
+        const newBlobIndex2 = BlobStore.importBlob(newBlob[1]);
 
         dispatch({
             type: ActionType.CUT_PAGE,
             index,
-            newBlobIndex
+            blobIndex: [newBlobIndex1, newBlobIndex2]
         });
     });
 

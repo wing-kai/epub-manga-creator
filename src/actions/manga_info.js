@@ -3,19 +3,25 @@ import zip from 'jszip'
 const ActionType = {
     SAVE_GLOBAL_SETTING: "SAVE_GLOBAL_SETTING",
     SAVE_CONTENTS_SETTING: "SAVE_CONTENTS_SETTING",
-    UPDATE_UUID: "UPDATE_UUID"
+    RESET: "RESET"
 }
 
-const saveGlobalSetting = data => ({ type: ActionType.SAVE_GLOBAL_SETTING, data });
+const saveGlobalSetting = (title, creator, subject, language) => ({
+    type: ActionType.SAVE_GLOBAL_SETTING,
+    title,
+    creator,
+    subject,
+    language
+});
 
 const saveContentsSetting = data => ({ type: ActionType.SAVE_CONTENTS_SETTING, data });
 
-const updateUUID = () => ({ type: ActionType.UPDATE_UUID });
+const reset = () => ({ type: ActionType.RESET })
 
 export { ActionType }
 
 export default {
-    updateUUID,
     saveGlobalSetting,
-    saveContentsSetting
+    saveContentsSetting,
+    reset
 }

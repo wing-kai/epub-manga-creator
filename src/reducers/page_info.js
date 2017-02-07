@@ -1,9 +1,8 @@
-import entry from "./entry"
+import entry, { undoable } from "./entry"
 import { ActionType } from '../actions/page_info'
 import BlobStore from '../blob_store'
 
 const initialState = {
-    firstBlankPage: true, // 首页留白
     viewport: {
         height: 1500,
         width: 1000,
@@ -29,7 +28,7 @@ const switchType = {
 
     [ActionType.REMOVE_PAGE]: (state, { index }) => {
         const blobIndex = state.list.splice(index, 1);
-        BlobStore.removeBlob(blobIndex);
+        // BlobStore.removeBlob(blobIndex);
         return state;
     },
 
@@ -72,9 +71,9 @@ const switchType = {
         return state;
     },
 
-    [ActionType.CUT_PAGE]: (state, { index, newBlobIndex }) => {
-        const blobIndex = state.list[index];
-        state.list.splice(index, 1, newBlobIndex, blobIndex);
+    [ActionType.CUT_PAGE]: (state, { index, blobIndex }) => {
+        // const blobIndex = state.list[index];
+        state.list.splice(index, 1, blobIndex[1], blobIndex[0]);
         return state;
     },
 
@@ -91,4 +90,4 @@ const switchType = {
     }
 }
 
-export default entry(initialState, switchType)
+export default entry(initialState, switchType);
