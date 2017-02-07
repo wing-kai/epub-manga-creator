@@ -2,6 +2,20 @@ import JSZip from 'jszip'
 import BlobStore from './blob_store'
 import Template from './template'
 
+const htmlToEscape = string => {
+    const reg = /"|&|'|<|>|[\x00-\x20]|[\x7F-\xFF]|[\u0100-\u2700]/g;
+
+    return string.replace(reg, ($0) => {
+        let c = $0.charCodeAt(0);
+        let r = ["&#"];
+
+        c = (c == 0x20) ? 0xA0 : c;
+        r.push(c);
+        r.push(";");
+        return r.join("");
+    });
+}
+
 const counter = (num, zeroCount) => {
     let str = String(num);
     let i = zeroCount - str.length;
@@ -87,10 +101,10 @@ const generateEPUB = function(State) {
 
     file_opf = file_opf
         .replace("{{uuid}}", UUID)
-        .replace("{{title}}", State.mangaInfo.global.title)
-        .replace(new RegExp("{{language}}", "gm"), State.mangaInfo.global.language)
-        .replace("{{creator}}", State.mangaInfo.global.creator)
-        .replace("{{subject}}", State.mangaInfo.global.subject)
+        .replace("{{title}}", htmlToEscape(State.mangaInfo.global.title))
+        .replace(new RegExp("{{language}}", "gm"), htmlToEscape(State.mangaInfo.global.language))
+        .replace("{{creator}}", htmlToEscape(State.mangaInfo.global.creator))
+        .replace("{{subject}}", htmlToEscape(State.mangaInfo.global.subject))
         .replace("{{createTime}}", new Date().toISOString())
         .replace("<!-- item-image -->", imageItemStr)
         .replace("<!-- item-xhtml -->", pageItemStr)
@@ -108,8 +122,8 @@ const generateEPUB = function(State) {
         if (position === "fill") positionStr = "xMidYMid slice";
 
         files_page["p_" + num + ".xhtml"] = Template['page.xhtml']
-            .replace("{{language}}", State.mangaInfo.global.language)
-            .replace("{{title}}", State.mangaInfo.global.title)
+            .replace("{{language}}", htmlToEscape(State.mangaInfo.global.language))
+            .replace("{{title}}", htmlToEscape(State.mangaInfo.global.title))
             .replace(new RegExp("{{width}}", "gm"), width)
             .replace(new RegExp("{{height}}", "gm"), height)
             .replace("{{image file src}}", "../image/" + (index > 0 ? 'i_' : '') + num + '.' + String(BlobStore.getBlobObject(blobIndex).type).slice(6))
