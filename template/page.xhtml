@@ -1,11 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<html xml:lang="{{language}}" xmlns="http://www.w3.org/1999/xhtml" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:epub="http://www.idpf.org/2007/ops">
-    <head>
-        <title>{{title}}</title>
-        <meta name="viewport" content="{{viewport}}"/>
-        <link rel="stylesheet" href="../css/page.css" type="text/css" />
-    </head>
-    <body epub:type="bodymatter">
-        <div style="background-image: url('{{image file src}}')" class="img {{position}} {{backgroundColor}}"></div>
-    </body>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:epub="http://www.idpf.org/2007/ops"
+ xml:lang="{{language}}"
+>
+<head>
+<meta charset="UTF-8" />
+<title>{{title}}</title>
+<link rel="stylesheet" type="text/css" href="../style/fixed-layout-jp.css"/>
+<meta name="viewport" content="width={{width}}, height={{height}}"/>
+</head>
+<body>
+<div class="main">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ width="100%" height="100%" viewBox="0 0 {{width}} {{height}}">
+<image width="100%" height="100%" preserveAspectRatio="{{position}}" xlink:href="{{image file src}}" />
+</svg>
+</div>
+</body>
 </html>

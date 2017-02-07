@@ -2,6 +2,15 @@ import JSZip from 'jszip'
 import BlobStore from './blob_store'
 import Template from './template'
 
+const counter = (num, zeroCount) => {
+    let str = String(num);
+    let i = zeroCount - str.length;
+    while (i-- > 0) {
+        str = "0" + str;
+    }
+    return str;
+}
+
 const generateRandomUUID = () => {
     const char = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -24,110 +33,106 @@ const generateEPUB = function(State) {
     const UUID = generateRandomUUID();
 
     Zip.folder("META-INF");
-    Zip.folder("OPS/images");
-    Zip.folder("OPS/xhtml");
-    Zip.folder("OPS/css");
-
-    // render toc.ncx file
-
-    let file_ncx = Template["toc.ncx"];
-    const navMapStr = State.mangaInfo.contents.map((navPointInfo, index) => (
-        '<ncx:navPoint id="p' + navPointInfo.refindex + '" playOrder="' + (index + 1) + '"><ncx:navLabel><ncx:text>' + navPointInfo.text + '</ncx:text></ncx:navLabel><ncx:content src="p' + navPointInfo.refindex + '.xhtml"/></ncx:navPoint>'
-    )).join('');
-
-    file_ncx = file_ncx
-        .replace(new RegExp("{{uuid}}", "gm"), UUID)
-        .replace(new RegExp("{{title}}", "gm"), State.mangaInfo.global.title)
-        .replace(new RegExp("{{creator}}", "gm"), State.mangaInfo.global.creator)
-        .replace(new RegExp("<!-- nav map -->", "gm"), navMapStr)
+    Zip.folder("OEBPS/image");
+    Zip.folder("OEBPS/text");
+    Zip.folder("OEBPS/style");
 
     // render toc.xhtml file
 
-    let file_toc_xhtml = Template["toc.xhtml"];
+    let file_navigation_documents_xhtml = Template["navigation-documents.xhtml"];
 
-    const tocListStr = State.mangaInfo.contents.map((navPointInfo, index) => (
-        '<li epub:type="chapter" id="toc-' + (index + 1) + '"><a href="p' + navPointInfo.refindex + '.xhtml">' + navPointInfo.text + '</a></li>'
-    )).join('');
+    const navigationList = State.mangaInfo.contents.map(navPointInfo => {
+        if (navPointInfo.refindex === 1)
+            return '<li><a href="text/p_cover.xhtml">' + navPointInfo.text + '</a></li>';
 
-    // cover & list string
-    const pageListStr = '<li><a href="p1.xhtml">1</a></li>' + State.pageInfo.list.map((p, index) => (
-        '<li><a href="p' + (index + 1) + '.xhtml">' + (index + 2) + '</a></li>'
-    )).join('');
+        return '<li><a href="text/p_' + counter(navPointInfo.refindex - 2, 4) + '.xhtml">' + navPointInfo.text + '</a></li>';
+    }).join('\n');
 
-    file_toc_xhtml = file_toc_xhtml
-        .replace(new RegExp("{{title}}", "gm"), State.mangaInfo.global.title)
-        .replace(new RegExp("{{ncxTitle}}", "gm"), State.mangaInfo.ncxTitle)
-        .replace(new RegExp("<!-- toc -->", "gm"), tocListStr)
-        .replace(new RegExp("<!-- page list -->", "gm"), pageListStr)
+    file_navigation_documents_xhtml = file_navigation_documents_xhtml
+        .replace("{{language}}", State.mangaInfo.global.language)
+        .replace('<!-- navigation-list -->', navigationList)
 
-    // render package.opf file
+    // render standard.opf file
 
-    let file_opf = Template["package.opf"];
+    let file_opf = Template["standard.opf"];
 
     const imageItemStr = State.pageInfo.list.map((blobIndex, index) => {
         const blob = BlobStore.getBlobObject(blobIndex);
         const mimetype = String(blob.type);
-        let str = '<item id="j' + (index + 1) + '" href="images/' + (index + 1) + '.' + mimetype.slice(6) + '" media-type="' + mimetype + '"/>';
 
-        if (index === 0) {
-            str = '<item id="cover" href="images/1.' + mimetype.slice(6) + '" media-type="' + mimetype + '"/>' + str;
-        }
+        if (index === 0)
+            return '<item id="cover" href="image/cover.' + mimetype.slice(6) + '" media-type="' + mimetype + '" properties="cover-image"></item>'
 
-        return str;
-    }).join('');
+        const num = counter(index - 1, 4);
+        return '<item id="i_' + num + '" href="image/i_' + num + '.' + mimetype.slice(6) + '" media-type="' + mimetype + '"></item>';
+    }).join('\n');
 
-    const pageItemStr = State.pageInfo.list.map((blobIndex, index) => (
-        '<item id="p' + (index + 1) + '" href="xhtml/p' + (index + 1) + '.xhtml" media-type="application/xhtml+xml"/>'
-    )).join('');
+    const pageItemStr = State.pageInfo.list.map((b, index) => {
+        if (index === 0)
+            return '';
+
+        const num = counter(index - 1, 4);
+        return '<item id="p_' + num + '" href="text/p_' + num + '.xhtml" media-type="application/xhtml+xml" properties="svg" fallback="i_' + num + '"></item>';
+    }).join('\n');
 
     let spread = "right";
     const itemrefStr = State.pageInfo.list.map((b, index) => {
         spread = spread === "left" ? "right" : "left";
-        return '<itemref idref="p' + (index + 1) + '" properties="page-spread-' + spread + '" />';
-    }).join('');
+
+        if (index === 0)
+            return '';
+
+        return '<itemref linear="yes" idref="p_' + counter(index - 1, 4) + '" properties="page-spread-' + spread + '"></itemref>';
+    }).join('\n');
 
     file_opf = file_opf
-        .replace(new RegExp("{{uuid}}", "gm"), UUID)
-        .replace(new RegExp("{{title}}", "gm"), State.mangaInfo.global.title)
+        .replace("{{uuid}}", UUID)
+        .replace("{{title}}", State.mangaInfo.global.title)
         .replace(new RegExp("{{language}}", "gm"), State.mangaInfo.global.language)
-        .replace(new RegExp("{{creator}}", "gm"), State.mangaInfo.global.creator)
-        .replace(new RegExp("{{subject}}", "gm"), State.mangaInfo.global.subject)
-        .replace(new RegExp("{{createTime}}", "gm"), new Date().toISOString())
-        .replace(new RegExp("<!-- image item -->", "gm"), imageItemStr)
-        .replace(new RegExp("<!-- page.xhtml item -->", "gm"), pageItemStr)
-        .replace(new RegExp("<!-- image item ref -->", "gm"), itemrefStr)
+        .replace("{{creator}}", State.mangaInfo.global.creator)
+        .replace("{{subject}}", State.mangaInfo.global.subject)
+        .replace("{{createTime}}", new Date().toISOString())
+        .replace("<!-- item-image -->", imageItemStr)
+        .replace("<!-- item-xhtml -->", pageItemStr)
+        .replace("<!-- itemref-xhtml -->", itemrefStr)
 
     // render page.xhtml file
 
     const files_page = {};
     State.pageInfo.list.map((blobIndex, index) => {
-        files_page["p" + (index + 1) + ".xhtml"] = Template['page.xhtml']
+        const { position, width, height } = State.pageInfo.viewport;
+        const num = index > 0 ? counter(index - 1, 4) : "cover";
+        let positionStr = "none";
+
+        if (position === "fit")  positionStr = "xMidYMid meet";
+        if (position === "fill") positionStr = "xMidYMid slice";
+
+        files_page["p_" + num + ".xhtml"] = Template['page.xhtml']
             .replace("{{language}}", State.mangaInfo.global.language)
             .replace("{{title}}", State.mangaInfo.global.title)
-            .replace("{{viewport}}", "width=" + State.pageInfo.viewport.width + ",height=" + State.pageInfo.viewport.height)
-            .replace("{{image file src}}", "../images/" + (index + 1) + '.' + String(BlobStore.getBlobObject(blobIndex).type).slice(6))
-            .replace("{{position}}", State.pageInfo.viewport.position)
-            .replace("{{backgroundColor}}", "bg-" + State.pageInfo.viewport.backgroundColor)
+            .replace(new RegExp("{{width}}", "gm"), width)
+            .replace(new RegExp("{{height}}", "gm"), height)
+            .replace("{{image file src}}", "../image/" + (index > 0 ? 'i_' : '') + num + '.' + String(BlobStore.getBlobObject(blobIndex).type).slice(6))
+            .replace("{{position}}", positionStr)
     });
 
     // Add file to zip object
 
     Zip.file("mimetype", Template.mimetype);
     Zip.file("META-INF/container.xml", Template["container.xml"]);
-    Zip.file("OPS/css/page.css", Template["page.css"]);
+    Zip.file("OEBPS/style/fixed-layout-jp.css", Template["fixed-layout-jp.css"]);
 
-    Zip.file("OPS/xhtml/toc.ncx", file_ncx);
-    Zip.file("OPS/xhtml/toc.xhtml", file_toc_xhtml);
+    Zip.file("OEBPS/navigation-documents.xhtml", file_navigation_documents_xhtml);
+    Zip.file("OEBPS/standard.opf", file_opf);
 
-    Zip.file("OPS/package.opf", file_opf);
-
-    State.pageInfo.list.map((blobIndex, index) => {
+    State.pageInfo.list.map((blobIndex, i) => {
         const blob = BlobStore.getBlobObject(blobIndex);
-        Zip.file("OPS/images/" + (index + 1) + "." + String(blob.type).slice(6), blob);
+        const numStr = i > 0 ? 'i_' + counter(i - 1, 4) : 'cover';
+        Zip.file("OEBPS/image/" + numStr + "." + String(blob.type).slice(6), blob);
     });
 
     Object.keys(files_page).map(fileName => {
-        Zip.file("OPS/xhtml/" + fileName, files_page[fileName]);
+        Zip.file("OEBPS/text/" + fileName, files_page[fileName]);
     });
 
     return new Promise(resolve => {
@@ -138,8 +143,8 @@ const generateEPUB = function(State) {
             const anchor = document.createElement("a");
             const objectURL = window.URL.createObjectURL(blob);
 
-            // anchor.download = State.mangaInfo.global.title.trim() + ".epub";
-            anchor.download = State.mangaInfo.global.title.trim() + ".zip";
+            anchor.download = State.mangaInfo.global.title.trim() + ".epub";
+            // anchor.download = State.mangaInfo.global.title.trim() + ".zip";
             anchor.href = objectURL;
             anchor.click();
 

@@ -137,7 +137,8 @@ class EditBookInfoPanel extends Component {
                                             <input defaultValue={props.subject} ref="g_subject" list="datalist_subject" className="form-control" type="text"/>
                                             <datalist id='datalist_subject'>
                                                 <option value="少年" />
-                                                <option value="靑年" />
+                                                <option value="少女" />
+                                                <option value="青年" />
                                                 <option value="同人誌" />
                                                 <option value="漫画" />
                                                 <option value="成年コミック" />
@@ -152,7 +153,7 @@ class EditBookInfoPanel extends Component {
                                             <input defaultValue={props.language} ref="g_language" list="datalist_language" className="form-control" type="text"/>
                                             <datalist id='datalist_language'>
                                                 <option value="ja" />
-                                                <option value="zh-CN" />
+                                                <option value="zh-Hans" />
                                                 <option value="en-US" />
                                             </datalist>
                                         </div>
@@ -222,7 +223,7 @@ class EditViewportPanel extends Component {
                             </Row>
                             <p></p>
                             <Row>
-                                <div className="col-8">
+                                <div className="col-6">
                                     <div className="card-group">
                                         <div className="card ">
                                             <img src="images/exp4.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
@@ -240,12 +241,6 @@ class EditViewportPanel extends Component {
                                             <img src="images/exp2.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
                                             <div className="card-footer text-center text-muted">
                                                 <Button color={position === "fit" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="fit">Fit</Button>
-                                            </div>
-                                        </div>
-                                        <div className="card">
-                                            <img src="images/exp3.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
-                                            <div className="card-footer text-center text-muted">
-                                                <Button color={position === "center" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="center">Center</Button>
                                             </div>
                                         </div>
                                     </div>
