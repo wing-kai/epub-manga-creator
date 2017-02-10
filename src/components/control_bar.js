@@ -16,6 +16,7 @@ class ControlBar extends Component {
         this.handleClickAddBlankPage   = this.handleClickAddBlankPage.bind(this);
         this.handleClickUndoButton     = this.handleClickUndoButton.bind(this);
         this.handleClickRedoButton     = this.handleClickRedoButton.bind(this);
+        this.handleGetFile             = this.handleGetFile.bind(this);
     }
 
     render() {
@@ -31,6 +32,15 @@ class ControlBar extends Component {
                                 <Button color="primary" onClick={this.handleClickUploadButton} title="update images">
                                     <Icon name="upload" fw="true" />
                                 </Button>
+                                <input
+                                    id="input-upload"
+                                    type="file"
+                                    value=""
+                                    accept="image/jpeg,image/png"
+                                    multiple="multiple"
+                                    onChange={this.handleGetFile}
+                                    style={{display:"none"}}
+                                />
                                 &nbsp;
                                 <div className="btn-toolbar" style={{display: "inline-block"}}>
                                     <div className="btn-group">
@@ -111,30 +121,26 @@ class ControlBar extends Component {
     }
 
     handleClickUploadButton() {
-        const input      = document.createElement('input');
-        const acceptType = 'image/jpeg,image/png';
+        const input = document.getElementById("input-upload");
+        input.click();
+    }
+
+    handleGetFile(e) {
+        const input = e.currentTarget;
         const { Action } = this.props;
         const component  = this;
 
-        input.type = "file";
-        input.multiple = "multiple";
-        input.accept = acceptType;
+        const filesList = [...input.files].filter(fileObj => input.accept.indexOf(fileObj.type) > -1);
 
-        input.onchange = function(e) {
-            const filesList = [...this.files].filter(fileObj => acceptType.indexOf(fileObj.type) > -1);
+        if (filesList.length) {
+            Action.importPages(filesList);
 
-            if (filesList.length) {
-                Action.importPages(filesList);
-
-                if (component.state.firstUpload) {
-                    component.setState({
-                        firstUpload: false
-                    });
-                }
+            if (component.state.firstUpload) {
+                component.setState({
+                    firstUpload: false
+                });
             }
         }
-
-        input.click();
     }
 
     handleClickGenerateButton() {

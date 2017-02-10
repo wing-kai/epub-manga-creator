@@ -29,7 +29,7 @@ class PageCard extends Component {
             <div className="card" style={{marginTop: 20, background: "#f6f6f6"}}>
                 <img src={props.src} style={{alignSelf: "center"}} className="card-img-top" height="210" width="140"/>
                 <div className="card-block" style={{borderTop: "1px solid rgba(0,0,0,.125)", background: "#fff"}}>
-                    <div className="btn-toolbar">
+                    <div className="btn-toolbar justify-content-between">
                         <div className="btn-group">
                             <Button color="secondary" size="sm" {...props.index === 0 ? {disabled: "true"} : {onClick: this.handleClickSetCover}}>
                                 <Icon name="book" />
