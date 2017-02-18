@@ -5,295 +5,181 @@ import clone from 'clone'
 
 import ActionCreators from '../actions'
 import BlobStore from '../blob_store'
+import GenerateEPUB from '../generate_epub'
 
+import WorkSpace from './workspace'
+import Modal, { ModalName } from './modal'
 import { Button, Icon, Row } from './common'
-import { ContentItem, EditContentPanel } from './contents'
-import ControlBar from './control_bar'
 
-class PageCard extends Component {
-    constructor(props) {
-        super(props);
-
-        this.handleClickSetCover           = this.handleClickSetCover.bind(this);
-        this.handleClickRemovePage         = this.handleClickRemovePage.bind(this);
-        this.handleClickMoveToNextPage     = this.handleClickMoveToNextPage.bind(this);
-        this.handleClickMoveToPreviousPage = this.handleClickMoveToPreviousPage.bind(this);
-        this.handleClickChangePangeIndex   = this.handleClickChangePangeIndex.bind(this);
-        this.handleClickCutPage            = this.handleClickCutPage.bind(this);
-    }
-
-    render() {
-        const { props } = this;
-
-        return (
-            <div className="card" style={{marginTop: 20, background: "#f6f6f6"}}>
-                <img src={props.src} style={{alignSelf: "center"}} className="card-img-top" height="210" width="140"/>
-                <div className="card-block" style={{borderTop: "1px solid rgba(0,0,0,.125)", background: "#fff"}}>
-                    <div className="btn-toolbar justify-content-between">
-                        <div className="btn-group">
-                            <Button color="secondary" size="sm" {...props.index === 0 ? {disabled: "true"} : {onClick: this.handleClickSetCover}}>
-                                <Icon name="book" />
-                            </Button>
-                            <Button color="secondary" size="sm" onClick={this.handleClickCutPage}>
-                                <Icon name="cut" />
-                            </Button>
-                            <Button color="secondary" size="sm" onClick={this.handleClickRemovePage}>
-                                <Icon name="times" />
-                            </Button>
-                        </div>
-                        &nbsp;
-                        <div className="btn-group">
-                            <Button color="secondary" size="sm" {...props.index === 0 ? {disabled: "true"} : {onClick: this.handleClickMoveToPreviousPage}}>
-                                <Icon name="angle-left" />
-                            </Button>
-                            <Button color="secondary" size="sm" onClick={this.handleClickMoveToNextPage}>
-                                <Icon name="angle-right" />
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-                <div className="card-footer text-center" onClick={this.handleClickChangePangeIndex}>
-                    <div className="card-text text-muted" style={{cursor: "default"}}>{props.index === 0 ? "Cover" : props.index + 1}</div>
-                </div>
-            </div>
-        )
-    }
-
-    handleClickSetCover() {
-        const { Action, index } = this.props;
-        Action.setCover(index);
-    }
-
-    handleClickRemovePage() {
-        const { Action, index } = this.props;
-        Action.removePage(index);
-    }
-
-    handleClickMoveToNextPage() {
-        const { Action, index } = this.props;
-        Action.moveToNextPage(index);
-    }
-
-    handleClickMoveToPreviousPage() {
-        const { Action, index } = this.props;
-        Action.moveToPreviousPage(index);
-    }
-
-    handleClickCutPage() {
-        const { Action, index } = this.props;
-        Action.cutPage(index);
-    }
-
-    handleClickChangePangeIndex() {
-        const { Action, index } = this.props;
-        const newIndex = Number(prompt("New Index (number only) :"));
-        
-        if (!isNaN(newIndex) && newIndex > 0) {
-            Action.changePageIndex(index, newIndex - 1);
-        }
-    }
+const STATUS = {
+    READY: 'READY',
+    WORKING: 'WORKING'
 }
 
-class EditBookInfoPanel extends Component {
+class ControlBar extends Component {
     constructor(props) {
         super(props);
-
-        this.handleClickSaveButton = this.handleClickSaveButton.bind(this);
-    }
-
-    render() {
-        const { props } = this;
-
-        return (
-            <Row>
-                <div className="col">
-                    <div className="card">
-                        <div className="card-header">Book Info</div>
-                        <div className="card-block">
-                            <Row>
-                                <div className="col">
-                                    <div className="form-group row">
-                                        <label className="col-2 col-form-label">Title</label>
-                                        <div className="col-10">
-                                            <input defaultValue={props.title} ref="g_title" className="form-control" type="text"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col">
-                                    <div className="form-group row">
-                                        <label className="col-2 col-form-label">Creator</label>
-                                        <div className="col-10">
-                                            <input defaultValue={props.creator} ref="g_creator" className="form-control" type="text"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Row>
-                            <p></p>
-                            <Row>
-                                <div className="col">
-                                    <div className="form-group row">
-                                        <label className="col-2 col-form-label">Subject</label>
-                                        <div className="col-10">
-                                            <input defaultValue={props.subject} ref="g_subject" list="datalist_subject" className="form-control" type="text"/>
-                                            <datalist id='datalist_subject'>
-                                                <option value="少年" />
-                                                <option value="少女" />
-                                                <option value="青年" />
-                                                <option value="同人誌" />
-                                                <option value="漫画" />
-                                                <option value="成年コミック" />
-                                            </datalist>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col">
-                                    <div className="form-group row">
-                                        <label className="col-2 col-form-label">Language</label>
-                                        <div className="col-10">
-                                            <input defaultValue={props.language} ref="g_language" list="datalist_language" className="form-control" type="text"/>
-                                            <datalist id='datalist_language'>
-                                                <option value="ja" />
-                                                <option value="zh-Hans" />
-                                                <option value="en-US" />
-                                            </datalist>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Row>
-                        </div>
-                        <div className="card-footer">
-                            <Button color="primary" onClick={this.handleClickSaveButton}>Save</Button>
-                        </div>
-                    </div>
-                </div>
-            </Row>
-        )
-    }
-
-    handleClickSaveButton() {
-        const title    = this.refs.g_title.value;
-        const creator  = this.refs.g_creator.value;
-        const subject  = this.refs.g_subject.value;
-        const language = this.refs.g_language.value;
-
-        this.props.handleSaveGlobalInfo({ title, creator, subject, language});
-    }
-}
-
-class EditViewportPanel extends Component {
-    constructor(props) {
-        super(props);
-
-        this.handleClickSaveButton = this.handleClickSaveButton.bind(this);
-        this.handleSetPosition = this.handleSetPosition.bind(this);
-        this.handleSetBackgroundColor = this.handleSetBackgroundColor.bind(this);
 
         this.state = {
-            position: props.position,
-            color: props.backgroundColor
+            generateStatus: STATUS.READY
         }
+
+        this.handleGetFile           = this.handleGetFile.bind(this);
+        this.handleClickAddBlankPage = this.handleClickAddBlankPage.bind(this);
+        this.handleClickResetButton  = this.handleClickResetButton.bind(this);
+        this.handleClickGenerateButton = this.handleClickGenerateButton.bind(this);
     }
 
     render() {
-        const { position, color } = this.state;
+        const component                = this;
+        const { State, Action }        = component.props;
+        const { handleClickShowModal } = component.props;
+        const { generateStatus }       = component.state;
+        let downloadDisable            = false;
+
+        if (State.pageInfo.list.length === 0 || generateStatus === STATUS.WORKING) {
+            downloadDisable = true;
+        }
 
         return (
-            <Row>
-                <div className="col">
-                    <div className="card">
-                        <div className="card-header">viewport</div>
-                        <div className="card-block">
-                            <Row>
-                                <div className="col">
-                                    <div className="form-group row">
-                                        <label className="col-2 col-form-label">Width&nbsp;(px)</label>
-                                        <div className="col-10">
-                                            <input ref="g_width" defaultValue={this.props.width} className="form-control" type="number"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col">
-                                    <div className="form-group row">
-                                        <label className="col-2 col-form-label">Height&nbsp;(px)</label>
-                                        <div className="col-10">
-                                            <input ref="g_height" defaultValue={this.props.height} className="form-control" type="number"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Row>
-                            <p></p>
-                            <Row>
-                                <div className="col-6">
-                                    <div className="card-group">
-                                        <div className="card ">
-                                            <img src="images/exp4.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
-                                            <div className="card-footer text-center text-muted">
-                                                <Button color={position === "stretch" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="stretch">Stretch</Button>
-                                            </div>
-                                        </div>
-                                        <div className="card">
-                                            <img src="images/exp1.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
-                                            <div className="card-footer text-center text-muted">
-                                                <Button color={position === "fill" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="fill">Fill</Button>
-                                            </div>
-                                        </div>
-                                        <div className="card">
-                                            <img src="images/exp2.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
-                                            <div className="card-footer text-center text-muted">
-                                                <Button color={position === "fit" ? "info" : "secondary"} onClick={this.handleSetPosition} size="sm" data-position="fit">Fit</Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-4">
-                                    <div className="card-group">
-                                        <div className="card">
-                                            <img src="images/exp5.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
-                                            <div className="card-footer text-center text-muted">
-                                                <Button color={color === "black" ? "info" : "secondary"} onClick={this.handleSetBackgroundColor} size="sm" data-color="black">Black</Button>
-                                            </div>
-                                        </div>
-                                        <div className="card">
-                                            <img src="images/exp3.png" height="100" style={{width:"100%"}} className="card-img-top viewport-img"/>
-                                            <div className="card-footer text-center text-muted">
-                                                <Button color={color === "white" ? "info" : "secondary"} onClick={this.handleSetBackgroundColor} size="sm" data-color="white">White</Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Row>
-                        </div>
-                        <div className="card-footer">
-                            <Button color="primary" onClick={this.handleClickSaveButton}>
-                                Save
+            <nav className="navbar sticky-top navbar-inverse bg-inverse bg-faded">
+                <div className="container">
+                    <Button color="secondary" onClick={this.handleClickImportButton}>
+                        <Icon name="folder-open" fw="true" />
+                    </Button>
+                    <input
+                        id="input-upload"
+                        type="file"
+                        value=""
+                        accept="image/jpeg,image/png"
+                        multiple="multiple"
+                        onChange={this.handleGetFile}
+                        style={{display:"none"}}
+                    />
+                    &nbsp;&nbsp;
+                    <div className="btn-toolbar" style={{display:"inline-block"}}>
+                        <div className="btn-group">
+                            <Button
+                                color="secondary"
+                                data-modal-name={ModalName.BookInfo}
+                                onClick={handleClickShowModal}
+                            >
+                                <Icon name="book" fw="true" />
+                            </Button>
+                            <Button
+                                color="secondary"
+                                data-modal-name={ModalName.ContentTable}
+                                onClick={handleClickShowModal}
+                            >
+                                <Icon name="list" fw="true" />
+                            </Button>
+                            <Button
+                                color="secondary"
+                                data-modal-name={ModalName.Viewport}
+                                onClick={handleClickShowModal}
+                            >
+                                <Icon name="eye" fw="true" />
                             </Button>
                         </div>
                     </div>
+                    &nbsp;&nbsp;
+                    <div className="btn-toolbar" style={{display:"inline-block"}}>
+                        <div className="btn-group">
+                            <Button
+                                color="secondary"
+                                data-color="white"
+                                onClick={this.handleClickAddBlankPage}
+                            >
+                                <Icon name="square-o" fw="true" />
+                            </Button>
+                            <Button
+                                color="secondary"
+                                data-color="black"
+                                onClick={this.handleClickAddBlankPage}
+                            >
+                                <Icon name="square" fw="true" />
+                            </Button>
+                        </div>
+                    </div>
+                    &nbsp;&nbsp;
+                    <div className="btn-toolbar" style={{display:"inline-block"}}>
+                        <div className="btn-group">
+                            <Button
+                                color="secondary"
+                                {...State.undoable ? {onClick: Action.undo} : {disabled: true}}
+                            >
+                                <Icon fw="true" name="undo" />
+                            </Button>
+                            <Button
+                                color="secondary"
+                                {...State.redoable ? {onClick: Action.redo} : {disabled: true}}
+                            >
+                                <Icon fw="true" name="rotate-right" />
+                            </Button>
+                        </div>
+                    </div>
+                    &nbsp;&nbsp;
+                    <Button color="secondary" onClick={this.handleClickResetButton}>
+                        <Icon fw="true" name="circle" />
+                    </Button>
+                    <Button color="secondary" style={{float:'right'}} {...downloadDisable ? {disabled: true} : {onClick: this.handleClickGenerateButton}}>
+                        {
+                            generateStatus === STATUS.WORKING
+                            ? <span className="fa fa-spinner fa-pulse" />
+                            : <Icon fw="true" name="download" />
+                        }
+                    </Button>
                 </div>
-            </Row>
-        )
+            </nav>
+        );
     }
 
-    handleClickSaveButton() {
-        const height = Number(this.refs.g_height.value);
-        const width = Number(this.refs.g_width.value);
+    handleClickImportButton() {
+        document.getElementById('input-upload').click();
+    }
 
-        this.props.handleSaveViewportInfo({
-            height,
-            width,
-            position: this.state.position,
-            backgroundColor: this.state.color
+    handleGetFile(e) {
+        const input = e.currentTarget;
+        const { Action } = this.props;
+        const component  = this;
+
+        const filesList = [...input.files].filter(fileObj => input.accept.indexOf(fileObj.type) > -1);
+
+        if (filesList.length)
+            Action.importPages(filesList);
+    }
+
+    handleClickGenerateButton(e) {
+        const component = this;
+
+        new Promise(resolve => component.setState({
+            generateStatus: STATUS.WORKING
+        }, resolve)).then(() => {
+            return GenerateEPUB(component.props.State)
+        }).then(() => {
+            component.setState({
+                generateStatus: STATUS.READY
+            });
+        }).catch(err => {
+            component.setState({
+                generateStatus: STATUS.READY
+            });
         });
     }
 
-    handleSetPosition(e) {
-        const position = e.currentTarget.dataset.position;
-        this.setState({ position });
+    handleClickAddBlankPage(e) {
+        const targetIndex = Number(prompt("index: (number only)"));
+        const { color } = e.currentTarget.dataset;
+
+        if (!isNaN(targetIndex) && targetIndex > 0)
+            this.props.Action.addBlankPage(targetIndex - 1, color);
     }
 
-    handleSetBackgroundColor(e) {
-        const color = e.currentTarget.dataset.color;
-        this.setState({ color });
+    handleClickResetButton(e) {
+        const needReset = window.confirm('确认重置工作区？（无法撤销）');
+
+        if (needReset)
+            this.props.Action.reset();
     }
 }
 
@@ -302,181 +188,82 @@ class Main extends Component {
         super(props);
 
         this.state = {
-            showBookInfoPanel: false,
-            showViewportPanel: false,
-            showContentsPanel: false
+            showModal: ModalName.None
         }
 
-        this.handleToggleGlobalInfoPanel = this.handleToggleGlobalInfoPanel.bind(this);
-        this.handleSaveGlobalInfo        = this.handleSaveGlobalInfo.bind(this);
-        this.handleToggleViewportPanel   = this.handleToggleViewportPanel.bind(this);
-        this.handleSaveViewportInfo      = this.handleSaveViewportInfo.bind(this);
-        this.handleToggleContentsPanel   = this.handleToggleContentsPanel.bind(this);
-        this.handleSaveContentsInfo      = this.handleSaveContentsInfo.bind(this);
-        this.handleHideAllPanel          = this.handleHideAllPanel.bind(this);
+        this.handleShowModal = this.handleShowModal.bind(this);
+        this.handleHideModal = this.handleHideModal.bind(this);
     }
 
     render() {
-        const { Action, State } = this.props;
-
-        let rowNum     = Math.ceil(State.pageInfo.list.length / 5);
-        let blankCard  = 5 - State.pageInfo.list.length % 5;
-        let colCount   = 0;
-        let rowContent = [];
-        let colContent = [];
-        let maxIndex   = State.pageInfo.list.length - 1;
-
-        blankCard = blankCard === 5 ? 0 : blankCard;
-
-        State.pageInfo.list.map((fileIndex, i) => {
-            colContent.push(
-                <PageCard
-                    key={rowNum + "-" + colCount}
-                    src={BlobStore.getObjectURL(fileIndex)} 
-                    index={i}
-                    Action={Action}
-                />
-            );
-
-            if (i === maxIndex) {
-                colCount = 4;
-                while (blankCard-- > 0) {
-                    colContent.push(<div style={{marginTop: 20}} className="card" key={"blank-" + blankCard} />);
-                }
-            }
-
-            if (colCount < 4) {
-                colCount++
-            } else {
-                rowContent.push(
-                    <Row key={"row-" + rowNum}>
-                        <div className="col">
-                            <div className="card-group">
-                                {colContent}
-                            </div>
-                        </div>
-                    </Row>
-                );
-                colContent = [];
-                rowNum--;
-                colCount = 0;
-            }
-        });
+        const { State, Action } = this.props;
 
         return (
-            <div>
-                <nav className="navbar navbar-light bg-faded">
-                    <h3 className="navbar-brand" href="">
-                        Epub Manga Creator
-                        &nbsp;
-                        <iframe
-                            style={{border:"none"}}
-                            src="https://ghbtns.com/github-btn.html?user=wing-kai&amp;repo=epub-manga-creator&amp;type=star&amp;count=true"
-                            frameBorder="0"
-                            scrolling="0"
-                            width="170px"
-                            height="20px"
-                        />
-                    </h3>
-                </nav>
-                <p />
-                <div className="container">
-                    <ControlBar
-                        Action={Action}
-                        State={State}
-                        handleToggleGlobalInfoPanel={this.handleToggleGlobalInfoPanel}
-                        handleToggleViewportPanel={this.handleToggleViewportPanel}
-                        handleToggleContentsPanel={this.handleToggleContentsPanel}
-                        handleHideAllPanel={this.handleHideAllPanel}
-                    />
-                    <p />
+            <div style={{width: '100%', height: '100%'}}>
+                <ControlBar
+                    State={State}
+                    Action={Action}
+                    handleClickShowModal={this.handleShowModal}
+                />
+                <div className="container" style={{marginTop: 20}}>
                     {
-                        this.state.showBookInfoPanel
-                        ? [<EditBookInfoPanel key="EditBookInfoPanel" handleSaveGlobalInfo={this.handleSaveGlobalInfo} {...State.mangaInfo.global} />, <p key="p" />]
-                        : undefined
-                    }
-                    {
-                        this.state.showContentsPanel
-                        ? [<EditContentPanel key="EditContentPanel" contents={State.mangaInfo.contents} handleClickSaveButton={this.handleSaveContentsInfo} />, <p key="p" />]
-                        : undefined
-                    }
-                    {
-                        this.state.showViewportPanel
-                        ? [<EditViewportPanel key="EditViewportPanel" handleSaveViewportInfo={this.handleSaveViewportInfo} {...State.pageInfo.viewport} />, <p key="p" />]
-                        : undefined
-                    }
-                    <Row>
-                        <div className="col">
-                            <div className="card card-default">
-                                <div className="card-header">
-                                    Pages
-                                </div>
-                                <div className="card-block" style={{paddingTop: 0}}>
-                                    {rowContent}
+                        State.pageInfo.list.length > 0
+                        ? <WorkSpace State={State} Action={Action} />
+                        : (
+                            <div className="jumbotron">
+                                <div className="display-3 text-center">
+                                    <Button color="secondary" onClick={this.handleClickImportButton}>
+                                        <br/>
+                                        <span className="fa fa-fw fa-folder-open fa-5x"></span>
+                                        <br/>
+                                        <br/>
+                                        <h3>&nbsp;导&nbsp;入&nbsp;图&nbsp;片&nbsp;</h3>
+                                    </Button>
                                 </div>
                             </div>
+                        )
+                    }
+                    <hr/>
+                    <div className="row" style={{marginBottom:20}}>
+                        <div className="col d-flex align-items-center justify-content-start">
+                            © 2017 wing-kai@Github</div>
+                        <div className="col d-flex align-items-center justify-content-center">
+                            <img src="logo.png" width="30" height="30" alt="logo"/></div>
+                        <div className="col d-flex align-items-center justify-content-end">
+                            <a target="_blank" href="https://github.com/wing-kai/epub-manga-creator/blob/gh-pages/about.md">About</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a target="_blank" href="https://wing-kai.github.io/epub-manga-creator/howto.html">How to</a>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <iframe
+                                style={{border:"none"}}
+                                src="https://ghbtns.com/github-btn.html?user=wing-kai&amp;repo=epub-manga-creator&amp;type=star&amp;count=true"
+                                frameBorder="0"
+                                scrolling="0"
+                                width="80px"
+                                height="20px"
+                            />
                         </div>
-                    </Row>
-                    <p></p>
-                    <p>&nbsp;</p>
+                    </div>
+                    <Modal name={this.state.showModal} State={State} Action={Action} handleHideModal={this.handleHideModal} />
                 </div>
             </div>
         )
     }
 
-    handleToggleGlobalInfoPanel() {
+    handleClickImportButton() {
+        document.getElementById('input-upload').click();
+    }
+
+    handleShowModal(e) {
+        const { modalName } = e.currentTarget.dataset;
         this.setState({
-            showBookInfoPanel: !this.state.showBookInfoPanel,
-            showViewportPanel: false,
-            showContentsPanel: false
+            showModal: modalName
         });
     }
 
-    handleToggleViewportPanel() {
+    handleHideModal() {
         this.setState({
-            showBookInfoPanel: false,
-            showViewportPanel: !this.state.showViewportPanel,
-            showContentsPanel: false
-        });
-    }
-
-    handleToggleContentsPanel() {
-        this.setState({
-            showBookInfoPanel: false,
-            showViewportPanel: false,
-            showContentsPanel: !this.state.showContentsPanel
-        });
-    }
-
-    handleSaveGlobalInfo({ title, creator, subject, language}) {
-        this.setState({
-            showBookInfoPanel: false
-        });
-
-        this.props.Action.saveGlobalSetting(title, creator, subject, language);
-    }
-
-    handleSaveViewportInfo(data) {
-        this.setState({
-            showViewportPanel: false
-        });
-
-        this.props.Action.saveViewportSetting(data);
-    }
-
-    handleSaveContentsInfo(data) {
-        this.setState({
-            showContentsPanel: false
-        });
-
-        this.props.Action.saveContentsSetting(data);
-    }
-
-    handleHideAllPanel() {
-        this.setState({
-            showBookInfoPanel: false,
-            showViewportPanel: false,
-            showContentsPanel: false
+            showModal: ModalName.None
         });
     }
 }

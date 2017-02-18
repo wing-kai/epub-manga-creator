@@ -29,18 +29,19 @@ const importPages = filesList => {
     }
 }
 
-const saveViewportSetting = data => ({ type: ActionType.SAVE_VIEWPORT_SETTING, data });
+const saveViewportSetting = (width, height, position, backgroundColor, direction) => ({
+    type: ActionType.SAVE_VIEWPORT_SETTING,
+    width,
+    height,
+    position,
+    backgroundColor,
+    direction
+});
 
 const removePage = transferPageNumber(ActionType.REMOVE_PAGE);
 
 // 设置封面
 const setCover = transferPageNumber(ActionType.SET_COVER_PAGE);
-
-// 向后调整页码
-const moveToNextPage = transferPageNumber(ActionType.MOVE_TO_NEXT_PAGE);
-
-// 向前调整页码
-const moveToPreviousPage = transferPageNumber(ActionType.MOVE_TO_PREVIOUS_PAGE);
 
 const changePageIndex = (originIndex, newIndex) => ({
     type: ActionType.CHANGE_PAGE_INDEX,
@@ -95,13 +96,13 @@ const cutPage = index => (dispatch, getState) => {
     image.src = BlobStore.getObjectURL(blobIndex);
 };
 
-const addBlankPage = index => dispatch => {
+const addBlankPage = (index, color) => dispatch => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
 
     canvas.width = 1;
     canvas.height = 1;
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = color === 'white' ? "#fff" : '#000';
     ctx.fillRect(0, 0, 1, 1);
     ctx.beginPath();
 
@@ -132,8 +133,6 @@ export default {
     importPages,
     addBlankPage,
     setCover,
-    moveToNextPage,
-    moveToPreviousPage,
     changePageIndex,
     cutPage,
     removePage,

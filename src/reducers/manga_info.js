@@ -2,11 +2,12 @@ import entry, { undoable } from "./entry"
 import { ActionType } from '../actions/manga_info'
 
 const initialState = {
-    global: {
+    bookInfo: {
+        id: "",
         title: "",
-        creator: "",
+        creator: [""],
         subject: "",
-        language: ""
+        publisher: ""
     },
     ncxTitle: "目次/Table of Contents",
     contents: [{
@@ -16,15 +17,19 @@ const initialState = {
 }
 
 const switchType = {
-    [ActionType.SAVE_GLOBAL_SETTING]: (state, { title, creator, subject, language }) => {
-        state.global = {
-            ...state.global,
-            title,
-            creator,
-            subject,
-            language
-        };
+    [ActionType.SAVE_BOOKINFO]: (state, { bookInfo }) => {
+        state.bookInfo = bookInfo;
+        return state;
+    },
 
+    [ActionType.ADD_CREATOR]: (state, { index }) => {
+        const c = state.bookInfo.creator[index];
+        state.bookInfo.creator.splice(index, 1, c, '');
+        return state;
+    },
+
+    [ActionType.REMOVE_CREATOR]: (state, { index }) => {
+        state.bookInfo.creator.splice(index, 1);
         return state;
     },
 

@@ -9,7 +9,8 @@ const initialState = {
         position: "stretch",
         backgroundColor: "white"
     },
-    list: []
+    list: [],
+    direction: 'right'
 }
 
 const switchType = {
@@ -83,8 +84,15 @@ const switchType = {
         return state;
     },
 
-    [ActionType.SAVE_VIEWPORT_SETTING]: (state, { data }) => {
-        state.viewport = data;
+    [ActionType.SAVE_VIEWPORT_SETTING]: (state, { width, height, position, backgroundColor, direction }) => {
+        state.viewport = {
+            width: Number(width),
+            height: Number(height),
+            position,
+            backgroundColor
+        };
+
+        state.direction = direction;
 
         return state;
     }

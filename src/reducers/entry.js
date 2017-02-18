@@ -16,6 +16,7 @@ const undoable = reducer => {
 
         if (action.type === "RESET") {
             BlobStore.removeAllBlob();
+            window.onbeforeunload = undefined;
             return clone(initialState);
         }
 
@@ -55,6 +56,7 @@ const undoable = reducer => {
         } else {
             let newPast = [...past, clone(present)];
             newPast = newPast.length > maxLength ? newPast.slice(1) : newPast;
+            window.onbeforeunload = e => confirm("确定退出吗？");
 
             return {
                 past: newPast,

@@ -6,7 +6,7 @@
     <meta name="description" content="package images to epub files" />
     <meta name="keywords" content="javascript,react,epub,manga" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" href="/logo.jpg">
+    <link rel="shortcut icon" href="logo.png">
     <title>Epub Manga Creator</title>
     <script>
     (function() {
@@ -22,6 +22,27 @@
     </script>
     <style>
         * { outline: none !important; }
+        .card-img-overlay {
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .card-img-overlay .control {
+            display: none !important;
+        }
+        .card-img-overlay:hover {
+            justify-content: space-between;
+        }
+        .card-img-overlay:hover .control {
+            display: flex !important;
+            align-items: center;
+        }
+        .card-img-overlay:hover {
+            display: flex !important;
+        }
+        .card-img-overlay .control span:hover {
+            color: #03a9f4 !important;
+        }
     </style>
 </head>
 <body>

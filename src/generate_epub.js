@@ -44,7 +44,7 @@ const generateRandomUUID = () => {
 
 const generateEPUB = function(State) {
     const Zip = new JSZip();
-    const UUID = generateRandomUUID();
+    const UUID = State.mangaInfo.bookInfo.id.trim() === "" ? generateRandomUUID() : State.mangaInfo.bookInfo.id;
 
     Zip.folder("META-INF");
     Zip.folder("OEBPS/image");
@@ -63,7 +63,6 @@ const generateEPUB = function(State) {
     }).join('\n');
 
     file_navigation_documents_xhtml = file_navigation_documents_xhtml
-        .replace("{{language}}", State.mangaInfo.global.language)
         .replace('<!-- navigation-list -->', navigationList)
 
     // render standard.opf file
@@ -89,7 +88,7 @@ const generateEPUB = function(State) {
         return '<item id="p_' + num + '" href="text/p_' + num + '.xhtml" media-type="application/xhtml+xml" properties="svg" fallback="i_' + num + '"></item>';
     }).join('\n');
 
-    let spread = "right";
+    let spread = State.pageInfo.direction;
     const itemrefStr = State.pageInfo.list.map((b, index) => {
         spread = spread === "left" ? "right" : "left";
 
@@ -99,16 +98,23 @@ const generateEPUB = function(State) {
         return '<itemref linear="yes" idref="p_' + counter(index - 1, 4) + '" properties="page-spread-' + spread + '"></itemref>';
     }).join('\n');
 
+    const counterLength = String(State.mangaInfo.bookInfo.creator.length).length + 1;
+    const creatorStr = State.mangaInfo.bookInfo.creator.map((name, i) => {
+        const index = counter(i + 1, counterLength);
+        return '<dc:creator id="creator'+ index +'">' + htmlToEscape(name) + '</dc:creator>\n<meta refines="#creator'+ index +'" property="role" scheme="marc:relators">aut</meta>\n<meta refines="#creator'+ index +'" property="file-as"></meta>\n<meta refines="#creator'+ index +'" property="display-seq">' + i + '</meta>'
+    }).join('\n')
+
     file_opf = file_opf
         .replace("{{uuid}}", UUID)
-        .replace("{{title}}", htmlToEscape(State.mangaInfo.global.title))
-        .replace(new RegExp("{{language}}", "gm"), htmlToEscape(State.mangaInfo.global.language))
-        .replace("{{creator}}", htmlToEscape(State.mangaInfo.global.creator))
-        .replace("{{subject}}", htmlToEscape(State.mangaInfo.global.subject))
+        .replace("{{title}}", htmlToEscape(State.mangaInfo.bookInfo.title))
+        .replace("<!-- creator-list -->", creatorStr)
+        .replace("{{subject}}", htmlToEscape(State.mangaInfo.bookInfo.subject))
+        .replace("{{publisher}}", htmlToEscape(State.mangaInfo.bookInfo.publisher))
         .replace("{{createTime}}", new Date().toISOString())
         .replace("<!-- item-image -->", imageItemStr)
         .replace("<!-- item-xhtml -->", pageItemStr)
         .replace("<!-- itemref-xhtml -->", itemrefStr)
+        .replace("{{direction}}", State.pageInfo.direction === 'right' ? ' page-progression-direction="rtl"' : '')
 
     // render page.xhtml file
 
@@ -122,8 +128,7 @@ const generateEPUB = function(State) {
         if (position === "fill") positionStr = "xMidYMid slice";
 
         files_page["p_" + num + ".xhtml"] = Template['page.xhtml']
-            .replace("{{language}}", htmlToEscape(State.mangaInfo.global.language))
-            .replace("{{title}}", htmlToEscape(State.mangaInfo.global.title))
+            .replace("{{title}}", htmlToEscape(State.mangaInfo.bookInfo.title))
             .replace(new RegExp("{{width}}", "gm"), width)
             .replace(new RegExp("{{height}}", "gm"), height)
             .replace("{{image file src}}", "../image/" + (index > 0 ? 'i_' : '') + num + '.' + String(BlobStore.getBlobObject(blobIndex).type).slice(6))
@@ -157,8 +162,8 @@ const generateEPUB = function(State) {
             const anchor = document.createElement("a");
             const objectURL = window.URL.createObjectURL(blob);
 
-            anchor.download = State.mangaInfo.global.title.trim() + ".epub";
-            // anchor.download = State.mangaInfo.global.title.trim() + ".zip";
+            anchor.download = State.mangaInfo.bookInfo.title.trim() + ".epub";
+            // anchor.download = State.mangaInfo.bookInfo.title.trim() + ".zip";
             anchor.href = objectURL;
             anchor.click();
 
