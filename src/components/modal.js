@@ -31,7 +31,7 @@ const ModalBody = props => (
 
 const FormGroupRow = props => (
     <div className="form-group row">
-        <small className="col-2">{props.label}</small>
+        <small className="col-3">{props.label}</small>
         <div className="col-7">{props.children}</div>
     </div>
 );
@@ -53,7 +53,7 @@ class BookInfo extends Component {
         const { State: { mangaInfo: { bookInfo } }, Action } = this.props;
 
         return (
-            <ModalBody title="漫画信息" handleHideModal={this.props.handleHideModal}>
+            <ModalBody title="Book Info" handleHideModal={this.props.handleHideModal}>
                 <FormGroupRow label="ID">
                     <input
                         defaultValue={bookInfo.id}
@@ -63,7 +63,7 @@ class BookInfo extends Component {
                         onBlur={this.handleBlurInput}
                     />
                 </FormGroupRow>
-                <FormGroupRow label="书名">
+                <FormGroupRow label="Title">
                     <input
                         defaultValue={bookInfo.title}
                         className="form-control-sm form-control"
@@ -75,8 +75,8 @@ class BookInfo extends Component {
                 {
                     this.state.creator.map((name, i) => (
                         <div className="form-group row" key={i}>
-                            <small className="col-2">{'作者 ' + (i + 1)}</small>
-                            <div className="col-7">
+                            <small className="col-3">{'Creator ' + (i + 1)}</small>
+                            <div className="col">
                                 <input
                                     data-index={i}
                                     value={this.state.creator[i]}
@@ -86,7 +86,7 @@ class BookInfo extends Component {
                                     onBlur={this.handleBlurInput}
                                 />
                             </div>
-                            <div className="col-3">
+                            <div className="col-2">
                                 <div className="btn-toolbar">
                                     <div className="btn-group">
                                         <button className="btn btn-sm btn-secondary" onClick={e => Action.addCreator(i)}>
@@ -109,7 +109,7 @@ class BookInfo extends Component {
                         </div>
                     ))
                 }
-                <FormGroupRow label="类别">
+                <FormGroupRow label="Subject">
                     <input
                         defaultValue={bookInfo.subject}
                         className="form-control-sm form-control"
@@ -127,7 +127,7 @@ class BookInfo extends Component {
                         <option value="成年コミック" />
                     </datalist>
                 </FormGroupRow>
-                <FormGroupRow label="出版社">
+                <FormGroupRow label="Publisher">
                     <input
                         defaultValue={bookInfo.publisher}
                         className="form-control-sm form-control"
@@ -148,6 +148,7 @@ class BookInfo extends Component {
                         <option value="白泉社" />
                         <option value="芳文社" />
                         <option value="ワニマガジン社" />
+                        <option value="FAKKU" />
                     </datalist>
                 </FormGroupRow>
             </ModalBody>
@@ -278,11 +279,11 @@ class ContentTable extends Component {
 
     render() {
         return (
-            <ModalBody title="目录" handleHideModal={this.props.handleHideModal}>
+            <ModalBody title="Content" handleHideModal={this.props.handleHideModal}>
                 <div className="row">
-                    <div className="col">页码</div>
-                    <div className="col-6">标题</div>
-                    <div className="col">调整</div>
+                    <div className="col">Index</div>
+                    <div className="col-6">Title</div>
+                    <div className="col"></div>
                 </div>
                 {
                     this.state.contents.map((contentItem, i) => {
@@ -391,7 +392,7 @@ const handleChangeViewportSetting = (refs, Action) => e => {
 
 const ViewportRowItem = props => (
     <div className="row">
-        <div className="col-3 d-flex align-items-center justify-content-end">{props.label}</div>
+        <div className="col-5 d-flex align-items-center justify-content-end">{props.label}</div>
         <div className="col">{props.children}</div>
     </div>
 );
@@ -408,8 +409,8 @@ const Viewport = props => {
     }
 
     return (
-        <ModalBody title="页面显示" handleHideModal={props.handleHideModal}>
-            <ViewportRowItem label="宽度 (px)">
+        <ModalBody title="Page Setting" handleHideModal={props.handleHideModal}>
+            <ViewportRowItem label="Width (px)">
                 <input
                     defaultValue={viewport.width}
                     type="number"
@@ -419,7 +420,7 @@ const Viewport = props => {
                 />
             </ViewportRowItem>
             <p />
-            <ViewportRowItem label="高度 (px)">
+            <ViewportRowItem label="Height (px)">
                 <input
                     defaultValue={viewport.height}
                     type="number"
@@ -429,16 +430,16 @@ const Viewport = props => {
                 />
             </ViewportRowItem>
             <p />
-            <ViewportRowItem label="页面显示">
+            <ViewportRowItem label="Image Position">
                 <select
                     className="form-control custom-select"
                     defaultValue={viewport.position}
                     ref={dom => refs.position = dom}
                     onChange={handleChangeViewportSetting(refs, Action)}
                 >
-                    <option value="stretch">拉伸</option>
-                    <option value="fill">填充</option>
-                    <option value="fit">适应</option>
+                    <option value="stretch">Stretch</option>
+                    <option value="fill">Fill</option>
+                    <option value="fit">Fit</option>
                 </select>
             </ViewportRowItem>
             <p />
@@ -454,15 +455,15 @@ const Viewport = props => {
                 }
             </ViewportRowItem>
             <p />
-            <ViewportRowItem label="背景颜色">
+            <ViewportRowItem label="Background Color">
                 <select
                     className="form-control custom-select"
                     defaultValue={viewport.backgroundColor}
                     ref={dom => refs.backgroundColor = dom}
                     onChange={handleChangeViewportSetting(refs, Action)}
                 >
-                    <option value="white">白色</option>
-                    <option value="black">黑色</option>
+                    <option value="white">White</option>
+                    <option value="black">Black</option>
                 </select>
             </ViewportRowItem>
             <p />
@@ -470,15 +471,15 @@ const Viewport = props => {
                 <img src={viewport.backgroundColor === 'white' ? "images/exp3.png" : "images/exp5.png"} width="200" height="100" />
             </ViewportRowItem>
             <p />
-            <ViewportRowItem label="翻页方向">
+            <ViewportRowItem label="Progression Direction">
                 <select
                     className="form-control custom-select"
                     defaultValue={direction}
                     ref={dom => refs.direction = dom}
                     onChange={handleChangeViewportSetting(refs, Action)}
                 >
-                    <option value="right">右（日式）</option>
-                    <option value="left">左</option>
+                    <option value="right">Right（Japan Style）</option>
+                    <option value="left">Left</option>
                 </select>
             </ViewportRowItem>
         </ModalBody>

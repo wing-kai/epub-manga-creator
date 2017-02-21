@@ -56,7 +56,7 @@ const undoable = reducer => {
         } else {
             let newPast = [...past, clone(present)];
             newPast = newPast.length > maxLength ? newPast.slice(1) : newPast;
-            window.onbeforeunload = e => confirm("确定退出吗？");
+            window.onbeforeunload = window.env === 'development' ? undefined : e => confirm("确定退出吗？");
 
             return {
                 past: newPast,

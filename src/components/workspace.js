@@ -13,7 +13,7 @@ const handleClickChangePangeIndex = Action => e => {
 
 const handleClickRemovePage = Action => e => {
     const index = Number(e.currentTarget.dataset.index);
-    if (window.confirm('确定移除第 ' + (index + 1) + ' 页？')) {
+    if (window.confirm('Delete Page ' + (index + 1) + ' ?')) {
         Action.removePage(index);
     }
 }

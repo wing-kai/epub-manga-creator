@@ -60,6 +60,7 @@ class ControlBar extends Component {
                     <div className="btn-toolbar" style={{display:"inline-block"}}>
                         <div className="btn-group">
                             <Button
+                                title="Book Info"
                                 color="secondary"
                                 data-modal-name={ModalName.BookInfo}
                                 onClick={handleClickShowModal}
@@ -67,6 +68,7 @@ class ControlBar extends Component {
                                 <Icon name="book" fw="true" />
                             </Button>
                             <Button
+                                title="Content"
                                 color="secondary"
                                 data-modal-name={ModalName.ContentTable}
                                 onClick={handleClickShowModal}
@@ -74,6 +76,7 @@ class ControlBar extends Component {
                                 <Icon name="list" fw="true" />
                             </Button>
                             <Button
+                                title="Page Setting"
                                 color="secondary"
                                 data-modal-name={ModalName.Viewport}
                                 onClick={handleClickShowModal}
@@ -86,6 +89,7 @@ class ControlBar extends Component {
                     <div className="btn-toolbar" style={{display:"inline-block"}}>
                         <div className="btn-group">
                             <Button
+                                title="Add Blank Page(white)"
                                 color="secondary"
                                 data-color="white"
                                 onClick={this.handleClickAddBlankPage}
@@ -93,6 +97,7 @@ class ControlBar extends Component {
                                 <Icon name="square-o" fw="true" />
                             </Button>
                             <Button
+                                title="Add Blank Page(black)"
                                 color="secondary"
                                 data-color="black"
                                 onClick={this.handleClickAddBlankPage}
@@ -105,12 +110,14 @@ class ControlBar extends Component {
                     <div className="btn-toolbar" style={{display:"inline-block"}}>
                         <div className="btn-group">
                             <Button
+                                title="Undo"
                                 color="secondary"
                                 {...State.undoable ? {onClick: Action.undo} : {disabled: true}}
                             >
                                 <Icon fw="true" name="undo" />
                             </Button>
                             <Button
+                                title="Redo"
                                 color="secondary"
                                 {...State.redoable ? {onClick: Action.redo} : {disabled: true}}
                             >
@@ -119,7 +126,7 @@ class ControlBar extends Component {
                         </div>
                     </div>
                     &nbsp;&nbsp;
-                    <Button color="secondary" onClick={this.handleClickResetButton}>
+                    <Button title="Reset Workspace" color="secondary" onClick={this.handleClickResetButton}>
                         <Icon fw="true" name="circle" />
                     </Button>
                     <Button color="secondary" style={{float:'right'}} {...downloadDisable ? {disabled: true} : {onClick: this.handleClickGenerateButton}}>
@@ -176,7 +183,7 @@ class ControlBar extends Component {
     }
 
     handleClickResetButton(e) {
-        const needReset = window.confirm('确认重置工作区？（无法撤销）');
+        const needReset = window.confirm('Reset workspace? (cant undo)');
 
         if (needReset)
             this.props.Action.reset();
@@ -212,12 +219,12 @@ class Main extends Component {
                         : (
                             <div className="jumbotron">
                                 <div className="display-3 text-center">
-                                    <Button color="secondary" onClick={this.handleClickImportButton}>
+                                    <Button title="import images" color="secondary" onClick={this.handleClickImportButton}>
                                         <br/>
                                         <span className="fa fa-fw fa-folder-open fa-5x"></span>
                                         <br/>
                                         <br/>
-                                        <h3>&nbsp;导&nbsp;入&nbsp;图&nbsp;片&nbsp;</h3>
+                                        <h3>Import Images</h3>
                                     </Button>
                                 </div>
                             </div>
@@ -226,7 +233,7 @@ class Main extends Component {
                     <hr/>
                     <div className="row" style={{marginBottom:20}}>
                         <div className="col d-flex align-items-center justify-content-start">
-                            © 2017 wing-kai@Github</div>
+                            2017 wing-kai@Github</div>
                         <div className="col d-flex align-items-center justify-content-center">
                             <img src="logo.png" width="30" height="30" alt="logo"/></div>
                         <div className="col d-flex align-items-center justify-content-end">
