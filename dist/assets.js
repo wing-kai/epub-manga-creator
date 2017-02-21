@@ -1,1 +1,1 @@
-window.env="production";window.WEBPACK_ASSETS={"commons":{"js":"dist/commons.aac952487d08a071c810.bundle.js"},"index":{"js":"dist/index.aac952487d08a071c810.bundle.js"}}
+window.env="production";window.WEBPACK_ASSETS={"commons":{"js":"dist/commons.3f743aab6f3f2e9fbed4.bundle.js"},"index":{"js":"dist/index.3f743aab6f3f2e9fbed4.bundle.js"}}
