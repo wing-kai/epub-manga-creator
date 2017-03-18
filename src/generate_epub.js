@@ -3,7 +3,7 @@ import BlobStore from './blob_store'
 import Template from './template'
 
 const htmlToEscape = string => {
-    const reg = /"|&|'|<|>|[\x00-\x20]|[\x7F-\xFF]|[\u0100-\u2700]/g;
+    const reg = /"|&|'|\!|<|>|[\x00-\x20]|[\x7F-\xFF]|[\u0100-\u2700]/g;
 
     return string.replace(reg, ($0) => {
         let c = $0.charCodeAt(0);
@@ -57,9 +57,9 @@ const generateEPUB = function(State) {
 
     const navigationList = State.mangaInfo.contents.map(navPointInfo => {
         if (navPointInfo.refindex === 1)
-            return '<li><a href="text/p_cover.xhtml">' + navPointInfo.text + '</a></li>';
+            return '<li><a href="text/p_cover.xhtml">' + htmlToEscape(navPointInfo.text) + '</a></li>';
 
-        return '<li><a href="text/p_' + counter(navPointInfo.refindex - 2, 4) + '.xhtml">' + navPointInfo.text + '</a></li>';
+        return '<li><a href="text/p_' + counter(navPointInfo.refindex - 2, 4) + '.xhtml">' + htmlToEscape(navPointInfo.text) + '</a></li>';
     }).join('\n');
 
     file_navigation_documents_xhtml = file_navigation_documents_xhtml
@@ -163,7 +163,6 @@ const generateEPUB = function(State) {
             const objectURL = window.URL.createObjectURL(blob);
 
             anchor.download = State.mangaInfo.bookInfo.title.trim() + ".epub";
-            // anchor.download = State.mangaInfo.bookInfo.title.trim() + ".zip";
             anchor.href = objectURL;
             anchor.click();
 

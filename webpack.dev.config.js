@@ -20,7 +20,6 @@ const config = {
             processOutput: assets => 'window.env="development";window.WEBPACK_ASSETS=' + JSON.stringify(assets)
         }),
         new webpack.DefinePlugin({
-            ROOT_PATH: '/',
             __DEBUG__: true,
             'process.env': {
                 'NODE_ENV': "\"development\"",

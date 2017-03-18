@@ -30,7 +30,6 @@ const config = {
             processOutput: assets => 'window.env="production";window.WEBPACK_ASSETS=' + JSON.stringify(assets)
         }),
         new webpack.DefinePlugin({
-            ROOT_PATH: '/cat-food/',
             __DEBUG__: false,
             'process.env': {
                 'NODE_ENV': JSON.stringify('production'),
