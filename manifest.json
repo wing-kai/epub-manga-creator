@@ -1,0 +1,12 @@
+{
+    "name": "EPub-Manga-Creator",
+    "short-name": "EMC",
+    "description": "a web GUI for create japanese epub manga Edit",
+    "start_url": "/",
+    "display": "browser",
+    "icons": [{
+        "src": "/logo.png",
+        "size": "512x512",
+        "type": "image/png"
+    }]
+}

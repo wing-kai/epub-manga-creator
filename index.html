@@ -6,12 +6,12 @@
     <meta name="description" content="package images to epub files" />
     <meta name="keywords" content="javascript,react,epub,manga" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="manifest" href="manifest.json">
     <link rel="shortcut icon" href="logo.png">
     <title>Epub Manga Creator</title>
     <script>
     (function() {
-        document.write('<script type="text\/javascript" src="dist\/assets.js?v=' + (new Date().getTime()) + '"><\/script>');
-        if (window.env === 'development') {
+        if (false === true) {
             document.write('<link href="\/node_modules\/font-awesome\/css\/font-awesome.min.css" rel="stylesheet" \/>');
             document.write('<link rel="stylesheet" href="\/node_modules\/bootstrap\/dist\/css\/bootstrap.min.css" \/>');
         } else {
@@ -48,10 +48,12 @@
 <body>
     <div id="body"></div>
     <script>
-    (() => {
-        document.write('<script type="text/javascript" src="' + window.WEBPACK_ASSETS.commons.js + '"><\/script>');
-        document.write('<script type="text/javascript" src="' + window.WEBPACK_ASSETS.index.js + '"><\/script>');
+    (function() {
+        if ('serviceWorker' in navigator) {
+            // register service worker
+            navigator.serviceWorker.register('service-worker.js');
+        }
     })();
     </script>
-</body>
+<script type="text/javascript" src="dist/commons.580ae10a5205d42eb246.bundle.js"></script><script type="text/javascript" src="dist/index.580ae10a5205d42eb246.bundle.js"></script></body>
 </html>
