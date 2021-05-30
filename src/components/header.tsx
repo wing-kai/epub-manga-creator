@@ -266,7 +266,7 @@ const Header = function() {
         <ul className="dropdown-menu" style={{top: 0,left:'100%'}}>
           <li><span className="dropdown-item" data-type="image" onClick={onClickImport}>image</span></li>
           <li><span className="dropdown-item" data-type="zip" onClick={onClickImport}>zip</span></li>
-          <li><span className="dropdown-item" data-type="epub" onClick={onClickImport}>epub</span></li>
+          {/* <li><span className="dropdown-item" data-type="epub" onClick={onClickImport}>epub</span></li> */}
         </ul>
       </div>
       <div className="nav-item">
