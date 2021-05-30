@@ -186,7 +186,7 @@ const Main = function() {
     <main id="main" className="pt-4 pb-4" ref={mainRef}>
       {
         showPages.length === 0 ? (
-          process.env.NODE_ENV === 'production'
+          process.env.NODE_ENV === 'development'
             ? <div className="btn btn-secondary main-input-upload" onClick={onClickImport}>Import</div>
             : <div className="alert alert-secondary text-center" role="alert">ready 🚀</div>
         ) : (
