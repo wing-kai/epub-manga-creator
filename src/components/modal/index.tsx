@@ -295,7 +295,21 @@ const ModalBook = observer(function() {
           <div className="mb-3 row">
             <label htmlFor="input-book-subject" className="col-sm-2 col-form-label">subject</label>
             <div className="col-sm-10">
-              <input type="text" className="form-control" list="dl-publisher" id="input-book-subject" value={storeBook.bookSubject} onInput={onChangeBookSubject}/>
+              <input type="text" className="form-control" list="dl-subject" id="input-book-subject" value={storeBook.bookSubject} onInput={onChangeBookSubject}/>
+              <datalist id="dl-subject">
+                <option value="少年" />
+                <option value="少女" />
+                <option value="青年" />
+                <option value="同人誌" />
+                <option value="漫画" />
+                <option value="成年コミック" />
+              </datalist>
+            </div>
+          </div>
+          <div className="mb-3 row">
+            <label htmlFor="input-book-publisher" className="col-sm-2 col-form-label">publisher</label>
+            <div className="col-sm-10">
+              <input type="text" className="form-control" list="dl-publisher" id="input-book-publisher" value={storeBook.bookPublisher} onInput={onChangeBookPublisher}/>
               <datalist id="dl-publisher">
                 <option value="KADOKAWA" />
                 <option value="講談社" />
@@ -309,20 +323,6 @@ const ModalBook = observer(function() {
                 <option value="芳文社" />
                 <option value="ワニマガジン社" />
                 <option value="FAKKU" />
-              </datalist>
-            </div>
-          </div>
-          <div className="mb-3 row">
-            <label htmlFor="input-book-publisher" className="col-sm-2 col-form-label">publisher</label>
-            <div className="col-sm-10">
-              <input type="text" className="form-control" list="dl-subject" id="input-book-publisher" value={storeBook.bookPublisher} onInput={onChangeBookPublisher}/>
-              <datalist id="dl-subject">
-                <option value="少年" />
-                <option value="少女" />
-                <option value="青年" />
-                <option value="同人誌" />
-                <option value="漫画" />
-                <option value="成年コミック" />
               </datalist>
             </div>
           </div>
