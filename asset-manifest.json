@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/static/css/main.2824e238.chunk.css",
-    "main.js": "/static/js/main.e3bb7e4e.chunk.js",
-    "main.js.map": "/static/js/main.e3bb7e4e.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.c466dcc9.js",
-    "runtime-main.js.map": "/static/js/runtime-main.c466dcc9.js.map",
-    "static/js/2.a016fb0e.chunk.js": "/static/js/2.a016fb0e.chunk.js",
-    "static/js/2.a016fb0e.chunk.js.map": "/static/js/2.a016fb0e.chunk.js.map",
-    "static/js/3.321c78a6.chunk.js": "/static/js/3.321c78a6.chunk.js",
-    "static/js/3.321c78a6.chunk.js.map": "/static/js/3.321c78a6.chunk.js.map",
-    "index.html": "/index.html",
-    "static/css/main.2824e238.chunk.css.map": "/static/css/main.2824e238.chunk.css.map",
-    "static/js/2.a016fb0e.chunk.js.LICENSE.txt": "/static/js/2.a016fb0e.chunk.js.LICENSE.txt",
-    "static/media/mimetype.163d0a1c.bin": "/static/media/mimetype.163d0a1c.bin"
+    "main.css": "/epub-manga-creator/static/css/main.2824e238.chunk.css",
+    "main.js": "/epub-manga-creator/static/js/main.6aac120a.chunk.js",
+    "main.js.map": "/epub-manga-creator/static/js/main.6aac120a.chunk.js.map",
+    "runtime-main.js": "/epub-manga-creator/static/js/runtime-main.45e9a78e.js",
+    "runtime-main.js.map": "/epub-manga-creator/static/js/runtime-main.45e9a78e.js.map",
+    "static/js/2.a016fb0e.chunk.js": "/epub-manga-creator/static/js/2.a016fb0e.chunk.js",
+    "static/js/2.a016fb0e.chunk.js.map": "/epub-manga-creator/static/js/2.a016fb0e.chunk.js.map",
+    "static/js/3.321c78a6.chunk.js": "/epub-manga-creator/static/js/3.321c78a6.chunk.js",
+    "static/js/3.321c78a6.chunk.js.map": "/epub-manga-creator/static/js/3.321c78a6.chunk.js.map",
+    "index.html": "/epub-manga-creator/index.html",
+    "static/css/main.2824e238.chunk.css.map": "/epub-manga-creator/static/css/main.2824e238.chunk.css.map",
+    "static/js/2.a016fb0e.chunk.js.LICENSE.txt": "/epub-manga-creator/static/js/2.a016fb0e.chunk.js.LICENSE.txt",
+    "static/media/mimetype.163d0a1c.bin": "/epub-manga-creator/static/media/mimetype.163d0a1c.bin"
   },
   "entrypoints": [
-    "static/js/runtime-main.c466dcc9.js",
+    "static/js/runtime-main.45e9a78e.js",
     "static/js/2.a016fb0e.chunk.js",
     "static/css/main.2824e238.chunk.css",
-    "static/js/main.e3bb7e4e.chunk.js"
+    "static/js/main.6aac120a.chunk.js"
   ]
 }
