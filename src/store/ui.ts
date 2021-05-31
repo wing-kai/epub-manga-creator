@@ -1,14 +1,13 @@
 import { makeAutoObservable, observable, action } from "mobx"
 
 class Store {
-  @observable modalAnalyzeVisible = false
   @observable modalBookVisible = false
   @observable modalContentVisible = false
   @observable modalPageVisible = false
   @observable maxCardBoxCountInOneRow = 0
   @observable selectedPageIndex: number | null = null
+  @observable fileName = ``
 
-  fileName = ``
   firstImport = true
 
   constructor() {
@@ -16,16 +15,11 @@ class Store {
   }
 
   @action
-  toggleAnalyzeVisible(fileName?: string) {
-    if (fileName) {
+  toggleBookVisible(fileName?: string) {
+    if (fileName && this.firstImport) {
       this.fileName = fileName
+      this.firstImport = false
     }
-    this.modalAnalyzeVisible = !this.modalAnalyzeVisible
-  }
-
-  @action
-  toggleBookVisible() {
-    this.firstImport = false
     this.modalBookVisible = !this.modalBookVisible
   }
 

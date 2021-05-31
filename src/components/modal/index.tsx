@@ -31,7 +31,7 @@ const KeywordPicker = function(props: { keywords: string[], onClick: (str: strin
             type="button"
             key={index}
             data-index={index}
-            className="btn btn-outline-primary btn-sm mr-1"
+            className="btn btn-outline-primary btn-sm me-2"
             onClick={onClick}
           >{str}</button>
         )
@@ -40,42 +40,22 @@ const KeywordPicker = function(props: { keywords: string[], onClick: (str: strin
   )
 }
 
-const ModalAnalyzeFileName = observer(function() {
-  const store = React.useContext(React.createContext(storeMain.ui))
-  const [fileName, setFileName] = useState('')
+const ModalBook = observer(function() {
+  const storeUI = React.useContext(React.createContext(storeMain.ui))
+  const storeBook = React.useContext(React.createContext(storeMain.book))
 
-  const [formTitle, setFormTitle] = useState('')
-  const [formAuthors, setFormAuthors] = useState('')
-  const [formPublisher, setFormPublisher] = useState('')
+  const [fileName, setFileName] = useState('')
   const [keywords, setKeywords] = useState<string[]>([])
 
   const onClickModal = useCallback((e) => {
     e.stopPropagation()
     return
   }, [])
-
   const onClickClose = useCallback(() => {
-    store.toggleAnalyzeVisible()
-  }, [store])
+    storeUI.toggleBookVisible()
+  }, [storeUI])
 
-  const onChangeFormTitle = useCallback((e: FormEvent<HTMLInputElement> | string) => {
-    setFormTitle(typeof e === 'string' ? e : e.currentTarget.value)
-  }, [])
-  const onChangeFormAuthors = useCallback((e: FormEvent<HTMLInputElement> | string) => {
-    setFormAuthors(typeof e === 'string' ? e : e.currentTarget.value)
-  }, [])
-  const onChangeFormPublisher = useCallback((e: FormEvent<HTMLInputElement> | string) => {
-    setFormPublisher(typeof e === 'string' ? e : e.currentTarget.value)
-  }, [])
-
-  const onClickSave = useCallback(() => {
-    storeMain.book.updateBookPageProperty('bookTitle', formTitle)
-    storeMain.book.updateBookPageProperty('bookAuthors', [formAuthors])
-    storeMain.book.updateBookPageProperty('bookPublisher', formPublisher)
-    onClickClose()
-  }, [formAuthors, formPublisher, formTitle, onClickClose])
-
-  useEffect(() => {
+  const onClickAnalyze = useCallback(() => {
     const reg = [
       /\[.*?\(.*\)\]/, // [xxx(xxx)]
       /\[.*?\]\s?\[.*?\]/, // [xxx][xxx]
@@ -95,8 +75,8 @@ const ModalAnalyzeFileName = observer(function() {
       const i = fileName.indexOf(suffix[0])
       const titleAndPrefix = fileName.slice(i === 0 ? suffix.length : i + suffix.length).trim()
 
-      setFormTitle(titleAndPrefix)
-      setFormAuthors(author?.slice(1, -1)?.trim() || '')
+      storeBook.updateBookPageProperty('bookTitle', titleAndPrefix)
+      storeBook.updateBookPageProperty('bookAuthors', [author?.slice(1, -1)?.trim() || ''])
       setKeywords(Array.from(fileName.match(reg[4]) || []).map(str => str.slice(1, -1)))
       return
     }
@@ -107,8 +87,8 @@ const ModalAnalyzeFileName = observer(function() {
       const i = fileName.indexOf(suffix[0])
       const titleAndPrefix = fileName.slice(i === 0 ? suffix.length : i + suffix.length).trim()
 
-      setFormTitle(titleAndPrefix)
-      setFormAuthors(author?.slice(1, -1)?.trim() || '')
+      storeBook.updateBookPageProperty('bookTitle', titleAndPrefix)
+      storeBook.updateBookPageProperty('bookAuthors', [author?.slice(1, -1)?.trim() || ''])
       setKeywords(Array.from(fileName.match(reg[4]) || []).map(str => str.slice(1, -1)))
       return
     }
@@ -119,8 +99,8 @@ const ModalAnalyzeFileName = observer(function() {
       const i = fileName.indexOf(suffix[0])
       const titleAndPrefix = fileName.slice(i === 0 ? suffix.length : i + suffix.length).trim()
 
-      setFormTitle(titleAndPrefix)
-      setFormAuthors(author)
+      storeBook.updateBookPageProperty('bookTitle', titleAndPrefix)
+      storeBook.updateBookPageProperty('bookAuthors', [author])
       setKeywords(Array.from(fileName.match(reg[4]) || []).map(str => str.slice(1, -1)))
       return
     }
@@ -131,80 +111,20 @@ const ModalAnalyzeFileName = observer(function() {
       const i = fileName.indexOf(suffix[0])
       const titleAndPrefix = fileName.slice(i === 0 ? suffix.length : i + suffix.length).trim()
 
-      setFormTitle(titleAndPrefix)
-      setFormAuthors(author)
+      storeBook.updateBookPageProperty('bookTitle', titleAndPrefix)
+      storeBook.updateBookPageProperty('bookAuthors', [author])
       setKeywords(Array.from(fileName.match(reg[4]) || []).map(str => str.slice(1, -1)))
       return
     }
 
-    setFormTitle(fileName)
+    storeBook.updateBookPageProperty('bookTitle', fileName)
     setKeywords(Array.from(fileName.match(reg[4]) || []).map(str => str.slice(1, -1)))
-  }, [fileName])
+  }, [storeBook, fileName])
 
-  useEffect(() => {
-    if (store.modalAnalyzeVisible) {
-      setFileName(store.fileName.split('.').slice(0, -1).join(''))
-    }
-  }, [store.fileName, store.modalAnalyzeVisible])
-
-  return (
-    <div className="modal-dialog modal-lg" onClick={onClickModal}>
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">analyze</h5>
-          <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={onClickClose}></button>
-        </div>
-        <div className="modal-body">
-          <div className="mb-3 row">
-            <label htmlFor="input-page-progression direction" className="col-2 col-form-label text-end">file name</label>
-            <div className="col-10">
-              <input type="text" className="form-control" value={fileName} disabled/>
-            </div>
-          </div>
-          <div className="mb-3 row">
-            <label htmlFor="input-page-progression direction" className="col-2 col-form-label text-end">title</label>
-            <div className="col-10">
-              <input type="text" className="form-control" value={formTitle} onChange={onChangeFormTitle}/>
-              <div className="mt-3"><KeywordPicker keywords={keywords} onClick={onChangeFormTitle}/></div>
-            </div>
-          </div>
-          <div className="mb-3 row">
-            <label htmlFor="input-page-progression direction" className="col-2 col-form-label text-end">authors</label>
-            <div className="col-10">
-              <input type="text" className="form-control" value={formAuthors} onChange={onChangeFormAuthors}/>
-              <div className="mt-3"><KeywordPicker keywords={keywords} onClick={onChangeFormAuthors}/></div>
-            </div>
-          </div>
-          <div className="mb-3 row">
-            <label htmlFor="input-page-progression direction" className="col-2 col-form-label text-end">publisher</label>
-            <div className="col-10">
-              <input type="text" className="form-control" value={formPublisher} onChange={onChangeFormPublisher}/>
-              <div className="mt-3"><KeywordPicker keywords={keywords} onClick={onChangeFormPublisher}/></div>
-            </div>
-          </div>
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={onClickClose}>later</button>
-          <button type="button" className="btn btn-primary" onClick={onClickSave}>Save changes</button>
-        </div>
-      </div>
-    </div>
-  )
-})
-
-const ModalBook = observer(function() {
-  const storeUI = React.useContext(React.createContext(storeMain.ui))
-  const storeBook = React.useContext(React.createContext(storeMain.book))
-
-  const onClickModal = useCallback((e) => {
-    e.stopPropagation()
-    return
+  const onChangeFileName = useCallback((e: FormEvent) => {
+    const eventTarget = e.currentTarget as HTMLInputElement
+    setFileName(eventTarget.value)
   }, [])
-
-  const onClickClose = useCallback(() => {
-    storeUI.toggleBookVisible()
-  }, [storeUI])
-
   const onChangeBookID = useCallback((e: FormEvent) => {
     const eventTarget = e.currentTarget as HTMLInputElement
     storeBook.updateBookPageProperty('bookID', eventTarget.value)
@@ -243,8 +163,33 @@ const ModalBook = observer(function() {
     storeBook.updateBookPageProperty('bookPublisher', eventTarget.value)
   }, [storeBook])
 
+  const onChangeTitleFromPicker = useCallback((value: string) => {
+    storeBook.updateBookPageProperty('bookTitle', value)
+  }, [storeBook])
+  const onChangeAuthorsFromPicker = useCallback((value: string) => {
+    const authors = toJS(storeBook.bookAuthors)
+
+    if (authors.slice(-1)[0] === '') {
+      authors[authors.length - 1] = value
+    } else {
+      authors.push(value)
+    }
+
+    storeBook.updateBookPageProperty('bookAuthors', authors)
+  }, [storeBook])
+  const onChangePublisherFromPicker = useCallback((value: string) => {
+    storeBook.updateBookPageProperty('bookPublisher', value)
+  }, [storeBook])
+
+  const keywordsLength = keywords.length
+
+  useEffect(() => {
+    setFileName(storeUI.fileName)
+    onClickAnalyze()
+  }, [storeUI.fileName, onClickAnalyze])
+
   return (
-    <div className="modal-dialog modal-md" onClick={onClickModal}>
+    <div className="modal-dialog modal-lg" onClick={onClickModal}>
       <div className="modal-content">
         <div className="modal-header">
           <h5 className="modal-title">Book</h5>
@@ -252,19 +197,37 @@ const ModalBook = observer(function() {
         </div>
         <div className="modal-body">
           <div className="mb-3 row">
-            <label htmlFor="input-book-id" className="col-sm-2 col-form-label">id</label>
+            <label htmlFor="input-filename" className="col-sm-2 col-form-label text-end">filename</label>
+            <div className="col-sm-10">
+              <div className="input-group">
+                <input type="text" className="form-control" id="input-filename" value={fileName} onInput={onChangeFileName}/>
+                <button
+                  className="btn btn-outline-secondary d-flex justify-content-center align-items-center"
+                  type="button"
+                  onClick={onClickAnalyze}
+                >
+                  <Icon name="rocket"></Icon>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="mb-3 row">
+            <label htmlFor="input-book-id" className="col-sm-2 col-form-label text-end">id</label>
             <div className="col-sm-10">
               <input type="text" className="form-control" id="input-book-id" value={storeBook.bookID} onInput={onChangeBookID}/>
             </div>
           </div>
           <div className="mb-3 row">
-            <label htmlFor="input-book-title" className="col-sm-2 col-form-label">title</label>
+            <label htmlFor="input-book-title" className="col-sm-2 col-form-label text-end">title</label>
             <div className="col-sm-10">
               <input type="text" className="form-control" id="input-book-title" value={storeBook.bookTitle} onInput={onChangeBookTitle}/>
+              <div className={keywordsLength ? "mt-3" : ''}>
+                <KeywordPicker keywords={keywords} onClick={onChangeTitleFromPicker}/>
+              </div>
             </div>
           </div>
           <div className="mb-3 row">
-            <label htmlFor="input-book-author" className="col-sm-2 col-form-label">author</label>
+            <label htmlFor="input-book-author" className="col-sm-2 col-form-label text-end">author</label>
             <div className="col-sm-10">
               {
                 storeBook.bookAuthors.map((name: string, index: number) => (
@@ -290,10 +253,13 @@ const ModalBook = observer(function() {
                   </div>
                 ))
               }
+              <div className={keywordsLength ? "mt-3" : ''}>
+                <KeywordPicker keywords={keywords} onClick={onChangeAuthorsFromPicker}/>
+              </div>
             </div>
           </div>
           <div className="mb-3 row">
-            <label htmlFor="input-book-subject" className="col-sm-2 col-form-label">subject</label>
+            <label htmlFor="input-book-subject" className="col-sm-2 col-form-label text-end">subject</label>
             <div className="col-sm-10">
               <input type="text" className="form-control" list="dl-subject" id="input-book-subject" value={storeBook.bookSubject} onInput={onChangeBookSubject}/>
               <datalist id="dl-subject">
@@ -307,7 +273,7 @@ const ModalBook = observer(function() {
             </div>
           </div>
           <div className="mb-3 row">
-            <label htmlFor="input-book-publisher" className="col-sm-2 col-form-label">publisher</label>
+            <label htmlFor="input-book-publisher" className="col-sm-2 col-form-label text-end">publisher</label>
             <div className="col-sm-10">
               <input type="text" className="form-control" list="dl-publisher" id="input-book-publisher" value={storeBook.bookPublisher} onInput={onChangeBookPublisher}/>
               <datalist id="dl-publisher">
@@ -324,6 +290,9 @@ const ModalBook = observer(function() {
                 <option value="ワニマガジン社" />
                 <option value="FAKKU" />
               </datalist>
+              <div className={keywordsLength ? "mt-3" : ''}>
+                <KeywordPicker keywords={keywords} onClick={onChangePublisherFromPicker}/>
+              </div>
             </div>
           </div>
         </div>
@@ -703,13 +672,10 @@ const ModalPage = observer(function() {
 const Modal = function() {
   const store = React.useContext(React.createContext(storeMain.ui))
 
-  const modalVisible = store.modalAnalyzeVisible || store.modalBookVisible || store.modalContentVisible || store.modalPageVisible
+  const modalVisible = store.modalBookVisible || store.modalContentVisible || store.modalPageVisible
 
   return modalVisible ? (
     <div id="modal" className="modal fade show" style={{display:'block'}}>
-      {
-        !store.modalAnalyzeVisible ? null : <ModalAnalyzeFileName />
-      }
       {
         !store.modalBookVisible ? null : <ModalBook />
       }
@@ -725,7 +691,7 @@ const Modal = function() {
 
 const ModalBackDrop = observer(function() {
   const store = React.useContext(React.createContext(storeMain.ui))
-  const modalVisible = store.modalAnalyzeVisible || store.modalBookVisible || store.modalContentVisible || store.modalPageVisible
+  const modalVisible = store.modalBookVisible || store.modalContentVisible || store.modalPageVisible
 
   return modalVisible
     ? <div key="modal-backdrop" className="modal-backdrop fade show"/>

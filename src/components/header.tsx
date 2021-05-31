@@ -223,7 +223,7 @@ const Header = function() {
       }).then((files: (File | null)[]) => {
         storeMain.importPageFromImages(files.filter(b => b !== null) as File[])
         if (storeMain.ui.firstImport) {
-          storeMain.ui.toggleAnalyzeVisible(fileName)
+          storeMain.ui.toggleBookVisible(fileName)
         }
       })
       return
