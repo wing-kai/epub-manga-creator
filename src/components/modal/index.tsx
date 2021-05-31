@@ -43,9 +43,13 @@ const KeywordPicker = function(props: { keywords: string[], onClick: (str: strin
 const ModalBook = observer(function() {
   const storeUI = React.useContext(React.createContext(storeMain.ui))
   const storeBook = React.useContext(React.createContext(storeMain.book))
+  const setsSeletRef = React.useRef<HTMLSelectElement>(null)
 
   const [fileName, setFileName] = useState('')
   const [keywords, setKeywords] = useState<string[]>([])
+  const [selectedSetIndex, setSelectedSetIndex] = useState(-1)
+
+  const keywordsLength = keywords.length
 
   const onClickModal = useCallback((e) => {
     e.stopPropagation()
@@ -181,12 +185,51 @@ const ModalBook = observer(function() {
     storeBook.updateBookPageProperty('bookPublisher', value)
   }, [storeBook])
 
-  const keywordsLength = keywords.length
+  const onClickModalBody = useCallback(() => {
+    setSelectedSetIndex(-1)
+  }, [])
+
+  const onClickSaveSet = useCallback(() => {
+    storeBook.saveBookInfoToSet()
+    setSelectedSetIndex(-1)
+    setTimeout(() => {
+      if (setsSeletRef.current) {
+        setsSeletRef.current.value = '-1'
+      }
+    }, 0)
+  }, [storeBook])
+
+  const onClickRemoveSet = useCallback(() => {
+    storeBook.removeBookInfoSet(selectedSetIndex)
+    setSelectedSetIndex(-1)
+    setTimeout(() => {
+      if (setsSeletRef.current) {
+        setsSeletRef.current.value = '-1'
+      }
+    }, 0)
+  }, [selectedSetIndex, storeBook])
+
+  const onApplySet = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const index = +e.currentTarget.value
+    setSelectedSetIndex(index)
+    storeBook.applySet(index)
+  }, [storeBook])
 
   useEffect(() => {
     setFileName(storeUI.fileName)
     onClickAnalyze()
   }, [storeUI.fileName, onClickAnalyze])
+
+  useEffect(() => {
+    if (selectedSetIndex !== -1) {
+      return
+    }
+    setTimeout(() => {
+      if (setsSeletRef.current) {
+        setsSeletRef.current.value = selectedSetIndex + ''
+      }
+    }, 0)
+  })
 
   return (
     <div className="modal-dialog modal-lg" onClick={onClickModal}>
@@ -195,7 +238,7 @@ const ModalBook = observer(function() {
           <h5 className="modal-title">Book</h5>
           <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={onClickClose}></button>
         </div>
-        <div className="modal-body">
+        <div className="modal-body" onClick={onClickModalBody}>
           <div className="mb-3 row">
             <label htmlFor="input-filename" className="col-sm-2 col-form-label text-end">filename</label>
             <div className="col-sm-10">
@@ -296,16 +339,29 @@ const ModalBook = observer(function() {
             </div>
           </div>
         </div>
+        <div className="modal-footer justify-content-start">
+          <button type="button" className="btn btn-sm btn-outline-primary" onClick={onClickSaveSet}>save set</button>
+          <select className="form-select form-select-sm" value={selectedSetIndex + ''} defaultChecked={false} ref={setsSeletRef} style={{width: '200px'}} onChange={onApplySet}>
+            {
+              storeBook.savedSets.map((set, index) =>
+                <option defaultChecked={false} key={index} value={index}>title: {set.bookTitle}, author: {set.bookAuthors[0]}, subject: {set.bookSubject}</option>
+              )
+            }
+          </select>
+          <button type="button" disabled={selectedSetIndex === -1} className="btn btn-sm btn-outline-danger" onClick={onClickRemoveSet}>remove set</button>
+        </div>
       </div>
     </div>
   )
 })
 
-const ModalContents = function() {
+const ModalContents = observer(function() {
   const store = React.useContext(React.createContext(storeMain.ui))
+  const setsSeletRef = React.useRef<HTMLSelectElement>(null)
   const [plainMode, setPlainMode] = useState(false)
   const [tempList, setTempList] = useState<typeof storeMain.contents.list>([])
   const [textAreaInput, setTextAreaInput] = useState('')
+  const [selectedSetIndex, setSelectedSetIndex] = useState(-1)
   const maxIndex = tempList.length - 1
 
   const onClickModal = useCallback((e) => {
@@ -414,9 +470,50 @@ const ModalContents = function() {
     store.toggleContentVisible()
   }, [store, tempList])
 
+  const onClickSaveSet = useCallback(() => {
+    storeMain.contents.saveSet(storeMain.book.bookTitle)
+    setSelectedSetIndex(-1)
+    setTimeout(() => {
+      if (setsSeletRef.current) {
+        setsSeletRef.current.value = '-1'
+      }
+    }, 0)
+  }, [])
+
+  const onClickRemoveSet = useCallback(() => {
+    storeMain.contents.removeSet(selectedSetIndex)
+    setSelectedSetIndex(-1)
+    setTimeout(() => {
+      if (setsSeletRef.current) {
+        setsSeletRef.current.value = '-1'
+      }
+    }, 0)
+  }, [selectedSetIndex])
+
+  const onApplySet = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const index = +e.currentTarget.value
+    setSelectedSetIndex(index)
+    setTempList(toJS(storeMain.contents.savedSets[index].list))
+  }, [])
+
+  const onClickModalBody = useCallback(() => {
+    setSelectedSetIndex(-1)
+  }, [])
+
+  useEffect(() => {
+    if (selectedSetIndex !== -1) {
+      return
+    }
+    setTimeout(() => {
+      if (setsSeletRef.current) {
+        setsSeletRef.current.value = selectedSetIndex + ''
+      }
+    }, 0)
+  })
+
   useEffect(() => {
     if (store.modalContentVisible) {
-      setTempList(deepClone(toJS(storeMain.contents.list)))
+      setTempList(toJS(storeMain.contents.list))
     }
   }, [store.modalContentVisible])
 
@@ -427,7 +524,7 @@ const ModalContents = function() {
           <h5 className="modal-title">Content</h5>
           <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={onClickClose}></button>
         </div>
-        <div className="modal-body">
+        <div className="modal-body" onClick={onClickModalBody}>
           {
             plainMode ? (
               <textarea
@@ -483,6 +580,21 @@ const ModalContents = function() {
             )
           }
         </div>
+        {
+          plainMode ? null : (
+            <div className="modal-footer justify-content-start">
+              <button type="button" className="btn btn-sm btn-outline-primary" onClick={onClickSaveSet}>save set</button>
+              <select className="form-select form-select-sm" key={selectedSetIndex} value={selectedSetIndex + ''} defaultChecked={false} ref={setsSeletRef} style={{width: '200px'}} onChange={onApplySet}>
+                {
+                  storeMain.contents.savedSets.map((set, index) =>
+                    <option defaultChecked={false} key={index} value={index}>{set.title}</option>
+                  )
+                }
+              </select>
+              <button type="button" disabled={selectedSetIndex === -1} className="btn btn-sm btn-outline-danger" onClick={onClickRemoveSet}>remove set</button>
+            </div>
+          )
+        }
         <div className="modal-footer justify-content-start">
           <button type="button" className="btn btn-outline-primary" onClick={togglePlainMode}>
             {plainMode ? 'form mode' : 'plain text mode'}
@@ -497,7 +609,7 @@ const ModalContents = function() {
       </div>
     </div>
   )
-}
+})
 
 const ButtonRadio = function(props: { value: any; current: any; label: string; onClick: (val: any) => void }) {
   const onClick = useCallback(() => {
@@ -674,8 +786,12 @@ const Modal = function() {
 
   const modalVisible = store.modalBookVisible || store.modalContentVisible || store.modalPageVisible
 
+  const onClickClose = useCallback(() => {
+    store.hideModal()
+  }, [store])
+
   return modalVisible ? (
-    <div id="modal" className="modal fade show" style={{display:'block'}}>
+    <div id="modal" className="modal fade show" style={{display:'block'}} onClick={onClickClose}>
       {
         !store.modalBookVisible ? null : <ModalBook />
       }

@@ -1,5 +1,4 @@
 import { action, makeAutoObservable, observable, toJS } from "mobx"
-import deepClone from "utils/deep-clone"
 
 interface ContentItem {
   pageIndex: number | null
@@ -10,8 +9,8 @@ interface IndexMap { [pageIndex: string]: number }
 
 const cloneState = function(this: Store) {
   return {
-    list: deepClone(toJS(this.list)),
-    indexMap: deepClone(toJS(this.indexMap))
+    list: toJS(this.list),
+    indexMap: toJS(this.indexMap)
   }
 }
 
@@ -20,10 +19,10 @@ class Store {
     pageIndex: 0,
     title: '表紙'
   }]
-
   @observable indexMap: IndexMap = {
      0: 0
   }
+  @observable savedSets: { title: string; list: ContentItem[] }[] = []
 
   constructor() {
     makeAutoObservable(this)
@@ -99,6 +98,21 @@ class Store {
 
     this.list = list
     this.indexMap = indexMap
+  }
+
+  @action
+  saveSet(title: string) {
+    this.savedSets.push({
+      title,
+      list: toJS(this.list)
+    })
+  }
+
+  @action
+  removeSet(index: number) {
+    const savedSets = toJS(this.savedSets)
+    savedSets.splice(index, 1)
+    this.savedSets = savedSets
   }
 }
 

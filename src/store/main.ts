@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable, toJS } from "mobx"
+import { action, autorun, makeAutoObservable, observable, toJS } from "mobx"
 import uuid from 'utils/get-uuid'
 import Book from 'store/book'
 import Ui from 'store/ui'
@@ -50,6 +50,16 @@ class Store {
     this.blobs = storeBlobs
 
     makeAutoObservable(this)
+
+    try {
+      const bookSets = JSON.parse(localStorage.getItem('EPUB_CREATOR_SAVED_SETS_BOOK') || '[]')
+      const contentSets = JSON.parse(localStorage.getItem('EPUB_CREATOR_SAVED_SETS_CONTENTS') || '[]')
+
+      this.book.savedSets = bookSets
+      this.contents.savedSets = contentSets
+    } catch {
+      // do nothing
+    }
   }
 
   @action
@@ -330,5 +340,10 @@ class Store {
 }
 
 const store = new Store()
+
+autorun(() => {
+  localStorage.setItem('EPUB_CREATOR_SAVED_SETS_BOOK', JSON.stringify(toJS(store.book.savedSets)))
+  localStorage.setItem('EPUB_CREATOR_SAVED_SETS_CONTENTS', JSON.stringify(toJS(store.contents.savedSets)))
+})
 
 export default store

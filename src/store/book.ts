@@ -8,6 +8,13 @@ export declare namespace StoreBook {
     sticky: 'auto' | 'left' | 'right',
     blank: boolean
   }
+
+  export interface BookInfoSet {
+    bookTitle: string
+    bookAuthors: string[]
+    bookSubject: string
+    bookPublisher: string
+  }
 }
 
 type BookPageProperty = 'bookID' | 'bookTitle' | 'bookAuthors' | 'bookSubject' | 'bookPublisher' | 'pageSize' | 'pagePosition' | 'pageShow' | 'pageFit' | 'pageBackgroundColor' | 'pageDirection'
@@ -27,6 +34,7 @@ class Store {
   @observable pageDirection: ('right' | 'left') = 'right'
 
   @observable pages: StoreBook.PageItem[] = []
+  @observable savedSets: StoreBook.BookInfoSet[] = []
 
   constructor() {
     makeAutoObservable(this)
@@ -125,6 +133,33 @@ class Store {
     }
 
     this.pages = pages
+  }
+
+  @action
+  saveBookInfoToSet() {
+    const newSet = {
+      bookTitle: this.bookTitle,
+      bookAuthors: this.bookAuthors,
+      bookSubject: this.bookSubject,
+      bookPublisher: this.bookPublisher,
+    }
+
+    this.savedSets.push(newSet)
+  }
+
+  @action
+  removeBookInfoSet(index: number) {
+    const savedSets = toJS(this.savedSets)
+    savedSets.splice(index, 1)
+    this.savedSets = savedSets
+  }
+
+  @action
+  applySet(index: number) {
+    this.bookTitle = this.savedSets[index].bookTitle
+    this.bookAuthors = this.savedSets[index].bookAuthors
+    this.bookSubject = this.savedSets[index].bookSubject
+    this.bookPublisher = this.savedSets[index].bookPublisher
   }
 }
 

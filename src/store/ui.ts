@@ -37,7 +37,6 @@ class Store {
   hideModal() {
     Object.assign(this, {
       modalBookVisible: false,
-      modalContentVisible: false,
       modalPageVisible: false,
     })
   }
