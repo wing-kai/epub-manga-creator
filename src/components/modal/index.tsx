@@ -133,9 +133,8 @@ const ModalBook = observer(function() {
     const eventTarget = e.currentTarget as HTMLInputElement
     storeBook.updateBookPageProperty('bookID', eventTarget.value)
   }, [storeBook])
-  const onChangeBookTitle = useCallback((e: FormEvent) => {
-    const eventTarget = e.currentTarget as HTMLInputElement
-    storeBook.updateBookPageProperty('bookTitle', eventTarget.value)
+  const onChangeBookTitle = useCallback((e: FormEvent<HTMLInputElement>) => {
+    storeBook.updateBookPageProperty('bookTitle', e.currentTarget.value)
   }, [storeBook])
   const onAddAuthor = useCallback((e: FormEvent) => {
     const eventTarget = e.currentTarget as HTMLInputElement
@@ -217,12 +216,16 @@ const ModalBook = observer(function() {
 
   useEffect(() => {
     setFileName(storeUI.fileName)
-    onClickAnalyze()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storeUI.fileName])
 
   useEffect(() => {
-    console.log('useEffect')
+    if (fileName && storeUI.firstImport) {
+      onClickAnalyze()
+      storeUI.firstUploaded()
+    }
+  }, [fileName, onClickAnalyze, storeUI])
+
+  useEffect(() => {
     if (selectedSetIndex !== -1) {
       return
     }

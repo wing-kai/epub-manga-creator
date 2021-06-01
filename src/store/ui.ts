@@ -16,11 +16,15 @@ class Store {
 
   @action
   toggleBookVisible(fileName?: string) {
+    this.modalBookVisible = !this.modalBookVisible
     if (fileName && this.firstImport) {
       this.fileName = fileName
-      this.firstImport = false
     }
-    this.modalBookVisible = !this.modalBookVisible
+  }
+
+  @action
+  firstUploaded() {
+    this.firstImport = false
   }
 
   @action
