@@ -151,3 +151,12 @@ body {
   height: 32px;
   line-height: 1;
 }
+
+#main .author-info > * {
+  width: auto;
+}
+
+#main .author-info .ghbtns {
+  width: 130px;
+  border: none;
+}

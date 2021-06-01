@@ -174,7 +174,8 @@ const Header = function() {
     if (inputType === 'zip' && (input?.files?.[0])) {
       const fileName = input.files[0].name 
       JSZip.loadAsync(input.files[0]).then(zipContent => {
-        const promises: Promise<File | null>[] = Object.values(zipContent.files).map(zipItem => {
+        const zipFiles = Object.keys(zipContent.files).sort().map((filename) => zipContent.files[filename])
+        const promises: Promise<File | null>[] = zipFiles.map(zipItem => {
           if (zipItem.dir) {
             return Promise.resolve(null)
           }

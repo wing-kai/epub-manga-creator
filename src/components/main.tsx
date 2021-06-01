@@ -199,6 +199,18 @@ const Main = function() {
           ))
         )
       }
+      <div className="row d-flex justify-content-end align-items-center mt-auto author-info">
+        <div>2021 wing-kai@Github</div>
+        <iframe
+          title="ghbtns"
+          className="ghbtns"
+          src="https://ghbtns.com/github-btn.html?user=wing-kai&amp;repo=epub-manga-creator&amp;type=star&amp;count=true"
+          frameBorder="0"
+          scrolling="0"
+          width="80px"
+          height="20px"
+        />
+      </div>
     </main>
   )
 }

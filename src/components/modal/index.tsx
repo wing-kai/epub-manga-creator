@@ -125,9 +125,9 @@ const ModalBook = observer(function() {
     setKeywords(Array.from(fileName.match(reg[4]) || []).map(str => str.slice(1, -1)))
   }, [storeBook, fileName])
 
-  const onChangeFileName = useCallback((e: FormEvent) => {
-    const eventTarget = e.currentTarget as HTMLInputElement
-    setFileName(eventTarget.value)
+  const onChangeFileName = useCallback((e: FormEvent<HTMLInputElement>) => {
+    console.log(e.currentTarget.value)
+    setFileName(e.currentTarget.value)
   }, [])
   const onChangeBookID = useCallback((e: FormEvent) => {
     const eventTarget = e.currentTarget as HTMLInputElement
@@ -218,9 +218,11 @@ const ModalBook = observer(function() {
   useEffect(() => {
     setFileName(storeUI.fileName)
     onClickAnalyze()
-  }, [storeUI.fileName, onClickAnalyze])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeUI.fileName])
 
   useEffect(() => {
+    console.log('useEffect')
     if (selectedSetIndex !== -1) {
       return
     }
