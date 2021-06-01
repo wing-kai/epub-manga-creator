@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/epub-manga-creator/static/css/main.2824e238.chunk.css",
-    "main.js": "/epub-manga-creator/static/js/main.19e1e1cf.chunk.js",
-    "main.js.map": "/epub-manga-creator/static/js/main.19e1e1cf.chunk.js.map",
-    "runtime-main.js": "/epub-manga-creator/static/js/runtime-main.45e9a78e.js",
-    "runtime-main.js.map": "/epub-manga-creator/static/js/runtime-main.45e9a78e.js.map",
-    "static/js/2.80eb83e3.chunk.js": "/epub-manga-creator/static/js/2.80eb83e3.chunk.js",
-    "static/js/2.80eb83e3.chunk.js.map": "/epub-manga-creator/static/js/2.80eb83e3.chunk.js.map",
-    "static/js/3.321c78a6.chunk.js": "/epub-manga-creator/static/js/3.321c78a6.chunk.js",
-    "static/js/3.321c78a6.chunk.js.map": "/epub-manga-creator/static/js/3.321c78a6.chunk.js.map",
+    "main.css": "/epub-manga-creator/static/css/main.4e05d5c5.chunk.css",
+    "main.js": "/epub-manga-creator/static/js/main.76620f05.chunk.js",
+    "main.js.map": "/epub-manga-creator/static/js/main.76620f05.chunk.js.map",
+    "runtime-main.js": "/epub-manga-creator/static/js/runtime-main.e83640aa.js",
+    "runtime-main.js.map": "/epub-manga-creator/static/js/runtime-main.e83640aa.js.map",
+    "static/js/2.5d1f6097.chunk.js": "/epub-manga-creator/static/js/2.5d1f6097.chunk.js",
+    "static/js/2.5d1f6097.chunk.js.map": "/epub-manga-creator/static/js/2.5d1f6097.chunk.js.map",
+    "static/js/3.b8453d07.chunk.js": "/epub-manga-creator/static/js/3.b8453d07.chunk.js",
+    "static/js/3.b8453d07.chunk.js.map": "/epub-manga-creator/static/js/3.b8453d07.chunk.js.map",
     "index.html": "/epub-manga-creator/index.html",
-    "static/css/main.2824e238.chunk.css.map": "/epub-manga-creator/static/css/main.2824e238.chunk.css.map",
-    "static/js/2.80eb83e3.chunk.js.LICENSE.txt": "/epub-manga-creator/static/js/2.80eb83e3.chunk.js.LICENSE.txt",
+    "static/css/main.4e05d5c5.chunk.css.map": "/epub-manga-creator/static/css/main.4e05d5c5.chunk.css.map",
+    "static/js/2.5d1f6097.chunk.js.LICENSE.txt": "/epub-manga-creator/static/js/2.5d1f6097.chunk.js.LICENSE.txt",
     "static/media/mimetype.163d0a1c.bin": "/epub-manga-creator/static/media/mimetype.163d0a1c.bin"
   },
   "entrypoints": [
-    "static/js/runtime-main.45e9a78e.js",
-    "static/js/2.80eb83e3.chunk.js",
-    "static/css/main.2824e238.chunk.css",
-    "static/js/main.19e1e1cf.chunk.js"
+    "static/js/runtime-main.e83640aa.js",
+    "static/js/2.5d1f6097.chunk.js",
+    "static/css/main.4e05d5c5.chunk.css",
+    "static/js/main.76620f05.chunk.js"
   ]
 }
