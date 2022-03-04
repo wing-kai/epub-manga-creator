@@ -1,5 +1,15 @@
 const getText = () => `<?xml version="1.0" encoding="UTF-8"?>
-<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="ja" unique-identifier="unique-id" prefix="rendition: http://www.idpf.org/vocab/rendition/#         epub-bundle-tool: https://wing-kai.github.io/epub-manga-creator/         ebpaj: http://www.ebpaj.jp/         fixed-layout-jp: http://www.digital-comic.jp/">
+<package
+  xmlns="http://www.idpf.org/2007/opf"
+  version="3.0"
+  xml:lang="ja"
+  unique-identifier="unique-id"
+  prefix="rendition: http://www.idpf.org/vocab/rendition/#
+          epub-bundle-tool: https://wing-kai.github.io/epub-manga-creator/
+          ebpaj: http://www.ebpaj.jp/
+          fixed-layout-jp: http://www.digital-comic.jp/
+          ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/"
+>
 
 <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
 
@@ -30,9 +40,14 @@ const getText = () => `<?xml version="1.0" encoding="UTF-8"?>
 <meta property="rendition:spread">{{spread}}</meta>
 
 <!-- etc. -->
+<meta property="ibooks:specified-fonts">true</meta>
+<meta property="ibooks:binding">false</meta>
 <meta property="ebpaj:guide-version">1.1</meta>
-<meta name="SpineColor" content="#FFFFFF"></meta>
 <meta name="cover" content="cover"></meta>
+<meta name="original-resolution" content="{{width}}x{{height}}"/>
+<meta name="orientation-lock" content="none"/>
+
+<meta property="fixed-layout-jp:viewport">width={{width}}, height={{height}}</meta>
 
 </metadata>
 
@@ -48,7 +63,6 @@ const getText = () => `<?xml version="1.0" encoding="UTF-8"?>
 <!-- item-image -->
 
 <!-- text -->
-<item id="p_cover" href="text/p_cover.xhtml" media-type="application/xhtml+xml" properties="svg" fallback="cover"></item>
 <!-- item-xhtml -->
 
 </manifest>

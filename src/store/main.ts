@@ -274,8 +274,8 @@ class Store {
         par = this.book.pagePosition === 'center'
           ? 'xMidYMid '
           : this.book.pageDirection === 'left'
-            ? (i + 1) % 2 === 1 ? 'xMaxYMid' : 'xMinYMid'
-            : (i + 1) % 2 === 1 ? 'xMinYMid' : 'xMaxYMid'
+            ? (i + 1) % 2 === 1 ? 'xMaxYMid ' : 'xMinYMid '
+            : (i + 1) % 2 === 1 ? 'xMinYMid ' : 'xMaxYMid '
     
         if (fitMode === 'fit') {
           par += 'meet'
@@ -313,6 +313,8 @@ class Store {
       .replace('{{publisher}}', htmlToEscape(this.book.bookPublisher))
       .replace('{{spread}}', this.book.pageShow === 'one' ? 'none' : 'landscape')
       .replace('{{createTime}}', new Date().toISOString())
+      .replace(new RegExp('{{width}}', 'gm'), viewPortWidth)
+      .replace(new RegExp('{{height}}', 'gm'), viewPortHeight)
       .replace('<!-- item-image -->', imageItemStr.join('\n'))
       .replace('<!-- item-xhtml -->', pageItemStr.join('\n'))
       .replace('<!-- itemref-xhtml -->', itemRefStr.join('\n'))
