@@ -8,12 +8,12 @@ import Icon from 'components/icon'
 import 'components/modal/index.css'
 
 const PAGE_SIZE: { [name: string]: () => [number, number] } = {
-  'B4': () => [250, 353],
-  'B5': () => [176, 250],
-  'A4': () => [210, 297],
-  'A5': () => [148, 210],
-  'CG 16:9': () => [160, 90],
-  'CG 16:10': () => [160, 100],
+  'B4': () => [1250, 1765],
+  'B5': () => [880, 1250],
+  'A4': () => [1050, 1485],
+  'A5': () => [1480, 2100],
+  'CG 16:9': () => [1600, 900],
+  'CG 16:10': () => [1600, 1000],
 }
 
 const KeywordPicker = function(props: { keywords: string[], onClick: (str: string) => void }) {

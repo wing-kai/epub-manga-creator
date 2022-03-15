@@ -200,7 +200,7 @@ const Main = function() {
         )
       }
       <div className="row d-flex justify-content-end align-items-center mt-auto author-info">
-        <div>2021 wing-kai@Github</div>
+        <div>2022 wing-kai@Github</div>
         <iframe
           title="ghbtns"
           className="ghbtns"
