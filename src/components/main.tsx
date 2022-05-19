@@ -96,17 +96,18 @@ const DoublePageCard = observer(function(props: {
   const rightSidePageIndex = storeBook.pageDirection === 'right' ? props.pages[0] : props.pages[1]
   const leftSidePage = leftSidePageIndex === null ? null : storeBook.pages[leftSidePageIndex]
   const rightSidePage = rightSidePageIndex === null ? null : storeBook.pages[rightSidePageIndex]
+  const coverPosition = storeBook.coverPosition === 'alone' ? 1 : 0
 
   return (
     <div className="card-group">
       <PageCard
-        pageItemIndex={leftSidePageIndex}
+        pageItemIndex={leftSidePageIndex === null ? null : (leftSidePageIndex - coverPosition)}
         blobItem={leftSidePage ? storeBlobs.blobs[leftSidePage.blobID] : null}
         pagePosition={storeBook.pagePosition === 'between' ? 'left' : 'center'}
         blank={leftSidePage?.blank || false}
       />
       <PageCard
-        pageItemIndex={rightSidePageIndex}
+        pageItemIndex={rightSidePageIndex === null ? null : (rightSidePageIndex - coverPosition)}
         blobItem={rightSidePage ? storeBlobs.blobs[rightSidePage.blobID] : null}
         pagePosition={storeBook.pagePosition === 'between' ? 'right' : 'center'}
         blank={rightSidePage?.blank || false}
@@ -153,10 +154,12 @@ const Main = function() {
     const len = storeBook.pages.length
 
     while(i++ < rowCount) {
-      const r: [any, any][] = []
+      const r: [number | null, number | null][] = []
       while(j++ < boxCountInOneRow) {
         r.push([
-          x === -1 ? null : ++x < len ? x : null,
+          storeBook.coverPosition === 'first-page'
+            ? x === -1 ? null : ++x < len ? x : null
+            : ++x < len ? x : null,
           ++x < len ? x : null
         ])
       }
@@ -166,7 +169,7 @@ const Main = function() {
 
     // setMaxCardBoxCountInOneRow(boxCountInOneRow)
     setShowPages(pages)
-  }, [storeBook.pageDirection, storeBook.pages])
+  }, [storeBook.coverPosition, storeBook.pageDirection, storeBook.pages.length])
 
   const onClickImport = useCallback(() => {
     document.getElementById('input-upload')?.click()

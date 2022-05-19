@@ -684,6 +684,9 @@ const ModalPage = observer(function() {
   const onChangePageDirection = useCallback((value) => {
     storeBook.updateBookPageProperty('pageDirection', value)
   }, [storeBook])
+  const onChangeCoverPosition = useCallback((value) => {
+    storeBook.updateBookPageProperty('coverPosition', value)
+  }, [storeBook])
 
   return (
     <div className="modal-dialog modal-md" onClick={onClickModal}>
@@ -778,6 +781,13 @@ const ModalPage = observer(function() {
             <div className="col-9 d-flex align-items-center">
               <ButtonRadio current={storeBook.pageDirection} value="right" label="right (japanese style)" onClick={onChangePageDirection} />
               <ButtonRadio current={storeBook.pageDirection} value="left" label="left" onClick={onChangePageDirection} />
+            </div>
+          </div>
+          <div className="mb-2 row">
+            <label className="col-3 col-form-label text-end">cover</label>
+            <div className="col-9 d-flex align-items-center">
+              <ButtonRadio current={storeBook.coverPosition} value="first-page" label="first page" onClick={onChangeCoverPosition} />
+              <ButtonRadio current={storeBook.coverPosition} value="alone" label="alone" onClick={onChangeCoverPosition} />
             </div>
           </div>
         </div>

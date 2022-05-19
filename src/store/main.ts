@@ -225,7 +225,11 @@ class Store {
     let imageItemStr: string[] = []
     let pageItemStr: string[] = []
     let itemRefStr: string[] = []
-    let spread = this.book.pageDirection
+    let spread = this.book.coverPosition === 'first-page'
+      ? this.book.pageDirection
+      : this.book.pageDirection === 'left'
+        ? 'right'
+        : 'left'
 
     this.book.pages.forEach((pageItem, i) => {
       const numStr = i === 0 ? 'cover' : getNumberStr(i - 1, 4)
@@ -244,6 +248,12 @@ class Store {
         spread = spread === 'left' ? 'right' : 'left'
       }
     })
+
+    if (this.book.coverPosition === 'alone') {
+      pageItemStr.splice(0, 1)
+    } else { // this.book.coverPosition === 'first-page'
+      itemRefStr.unshift(`<itemref linear="yes" idref="p_cover" properties="rendition:page-spread-center"></itemref>`)
+    }
 
     const viewPortWidth = this.book.pageSize[0] + ''
     const viewPortHeight = this.book.pageSize[1] + ''
@@ -320,7 +330,6 @@ class Store {
       .replace('<!-- itemref-xhtml -->', itemRefStr.join('\n'))
       .replace('{{direction}}', this.book.pageDirection === 'right' ? ' page-progression-direction="rtl"' : '')
 
-    // console.log(templateStandardOpf)
     Zip.file('mimetype', 'application/epub+zip')
     Zip.file('META-INF/container.xml', templateContainerXml)
     Zip.file('OEBPS/style/fixed-layout-jp.css', templateFixedLayoutJpCss)
