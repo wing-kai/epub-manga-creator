@@ -116,7 +116,7 @@ const PageControl = observer(function(props: { pageIndex: number | null }) {
 })
 
 const AcceptMap = {
-  image: 'image/jpeg,image/png,image/webp',
+  image: 'image/jpeg,image/png,image/webp,image/avif',
   zip: 'application/zip',
   epub: 'application/epub+zip',
 }
@@ -200,6 +200,9 @@ const Header = function() {
                 case 'ffd8ffe3':
                 case 'ffd8ffe8':
                   mimeType = 'image/jpeg'
+                  break
+                case '00020': // todo: 不确定是不是这个
+                  mimeType = 'image/avif'
                   break
                 default:
                   break
