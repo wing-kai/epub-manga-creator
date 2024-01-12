@@ -1,23 +1,16 @@
 {
   "files": {
-    "main.css": "/epub-manga-creator/static/css/main.10d74dd0.chunk.css",
-    "main.js": "/epub-manga-creator/static/js/main.1052fecb.chunk.js",
-    "main.js.map": "/epub-manga-creator/static/js/main.1052fecb.chunk.js.map",
-    "runtime-main.js": "/epub-manga-creator/static/js/runtime-main.e83640aa.js",
-    "runtime-main.js.map": "/epub-manga-creator/static/js/runtime-main.e83640aa.js.map",
-    "static/js/2.5d1f6097.chunk.js": "/epub-manga-creator/static/js/2.5d1f6097.chunk.js",
-    "static/js/2.5d1f6097.chunk.js.map": "/epub-manga-creator/static/js/2.5d1f6097.chunk.js.map",
-    "static/js/3.b8453d07.chunk.js": "/epub-manga-creator/static/js/3.b8453d07.chunk.js",
-    "static/js/3.b8453d07.chunk.js.map": "/epub-manga-creator/static/js/3.b8453d07.chunk.js.map",
+    "main.css": "/epub-manga-creator/static/css/main.14dd50e0.css",
+    "main.js": "/epub-manga-creator/static/js/main.b0a243ac.js",
+    "static/js/787.f8db4ba6.chunk.js": "/epub-manga-creator/static/js/787.f8db4ba6.chunk.js",
     "index.html": "/epub-manga-creator/index.html",
-    "static/css/main.10d74dd0.chunk.css.map": "/epub-manga-creator/static/css/main.10d74dd0.chunk.css.map",
-    "static/js/2.5d1f6097.chunk.js.LICENSE.txt": "/epub-manga-creator/static/js/2.5d1f6097.chunk.js.LICENSE.txt",
-    "static/media/mimetype.163d0a1c.bin": "/epub-manga-creator/static/media/mimetype.163d0a1c.bin"
+    "static/media/mimetype": "/epub-manga-creator/static/media/mimetype.163d0a1c7610c6ff76e8",
+    "main.14dd50e0.css.map": "/epub-manga-creator/static/css/main.14dd50e0.css.map",
+    "main.b0a243ac.js.map": "/epub-manga-creator/static/js/main.b0a243ac.js.map",
+    "787.f8db4ba6.chunk.js.map": "/epub-manga-creator/static/js/787.f8db4ba6.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.e83640aa.js",
-    "static/js/2.5d1f6097.chunk.js",
-    "static/css/main.10d74dd0.chunk.css",
-    "static/js/main.1052fecb.chunk.js"
+    "static/css/main.14dd50e0.css",
+    "static/js/main.b0a243ac.js"
   ]
 }
