@@ -6,7 +6,7 @@ body {
     padding:   0;
     font-size: 0;
 }
-svg {
+svg, img {
     margin:    0;
     padding:   0;
 }

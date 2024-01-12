@@ -17,7 +17,7 @@ export declare namespace StoreBook {
   }
 }
 
-type BookPageProperty = 'bookID' | 'bookTitle' | 'bookAuthors' | 'bookSubject' | 'bookPublisher' | 'pageSize' | 'pagePosition' | 'pageShow' | 'pageFit' | 'pageBackgroundColor' | 'pageDirection' | 'coverPosition'
+type BookPageProperty = 'bookID' | 'bookTitle' | 'bookAuthors' | 'bookSubject' | 'bookPublisher' | 'pageSize' | 'pagePosition' | 'pageShow' | 'pageFit' | 'pageBackgroundColor' | 'pageDirection' | 'coverPosition' | 'imgTag'
 
 class Store {
   @observable bookID: string = uuid()
@@ -33,6 +33,7 @@ class Store {
   @observable pageBackgroundColor: ('white' | 'black') = 'white'
   @observable pageDirection: ('right' | 'left') = 'right'
   @observable coverPosition: ('first-page' | 'alone') = 'first-page'
+  @observable imgTag: ('svg' | 'img') = 'svg'
 
   @observable pages: StoreBook.PageItem[] = []
   @observable savedSets: StoreBook.BookInfoSet[] = []

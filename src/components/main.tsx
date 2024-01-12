@@ -5,6 +5,8 @@ import storeMain from 'store/main'
 import storeBlobs, { StoreBlobs } from 'store/blobs'
 import Icon from './icon'
 
+const THIS_YEAR = (new Date()).getFullYear()
+
 const PageCard = observer(function(props: {
   pageItemIndex: number | null
   blobItem?: StoreBlobs.ImageBlob | null
@@ -203,7 +205,7 @@ const Main = function() {
         )
       }
       <div className="row d-flex justify-content-end align-items-center mt-auto author-info">
-        <div>2022 wing-kai@Github</div>
+        <div>{THIS_YEAR} wing-kai@Github</div>
         <iframe
           title="ghbtns"
           className="ghbtns"

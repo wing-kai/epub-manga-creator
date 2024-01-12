@@ -687,6 +687,9 @@ const ModalPage = observer(function() {
   const onChangeCoverPosition = useCallback((value) => {
     storeBook.updateBookPageProperty('coverPosition', value)
   }, [storeBook])
+  const onChangeImageTag = useCallback((value) => {
+    storeBook.updateBookPageProperty('imgTag', value)
+  }, [storeBook])
 
   return (
     <div className="modal-dialog modal-md" onClick={onClickModal}>
@@ -788,6 +791,13 @@ const ModalPage = observer(function() {
             <div className="col-9 d-flex align-items-center">
               <ButtonRadio current={storeBook.coverPosition} value="first-page" label="first page" onClick={onChangeCoverPosition} />
               <ButtonRadio current={storeBook.coverPosition} value="alone" label="alone" onClick={onChangeCoverPosition} />
+            </div>
+          </div>
+          <div className="mb-2 row">
+            <label className="col-3 col-form-label text-end">image tag</label>
+            <div className="col-9 d-flex align-items-center">
+              <ButtonRadio current={storeBook.imgTag} value="svg" label="<svg />" onClick={onChangeImageTag} />
+              <ButtonRadio current={storeBook.imgTag} value="img" label="<img />" onClick={onChangeImageTag} />
             </div>
           </div>
         </div>

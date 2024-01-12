@@ -9,6 +9,7 @@ import JSZip from "jszip"
 import 'template/mimetype'
 import getTemplateContainerXml from 'template/container.xml'
 import getTemplatePageXhtml from 'template/page.xhtml'
+import getTemplatePageImgXhtml from 'template/page_img.xhtml'
 import getTemplateFixedLayoutJpCss from 'template/fixed-layout-jp.css'
 import getTemplateStandardOpf from 'template/standard.opf'
 import getTemplateNavigationDocumentsXhtml from 'template/navigation-documents.xhtml'
@@ -196,6 +197,7 @@ class Store {
   generateBook() {
     let templateContainerXml = getTemplateContainerXml()
     let templatePageXhtml = getTemplatePageXhtml()
+    let templatePageImgXhtml = getTemplatePageImgXhtml()
     let templateFixedLayoutJpCss = getTemplateFixedLayoutJpCss()
     let templateStandardOpf = getTemplateStandardOpf()
     let templateNavigationDocumentsXhtml = getTemplateNavigationDocumentsXhtml()
@@ -260,51 +262,102 @@ class Store {
     const fitMode = this.book.pageFit
     const bookTitle = htmlToEscape(this.book.bookTitle.trim())
 
-    this.book.pages.forEach((pageItem, i) => {
-      const numStr = i === 0 ? 'cover' : getNumberStr(i - 1, 4)
-
-      if (pageItem.blank) {
+    if (this.book.imgTag === 'svg') {
+      this.book.pages.forEach((pageItem, i) => {
+        const numStr = i === 0 ? 'cover' : getNumberStr(i - 1, 4)
+        const blob = this.blobs.blobs[pageItem.blobID].blob
+        const mimeType = blob.type.slice(6)
+        const imageFileName = (i === 0 ? '' : 'i_') + numStr + '.' + mimeType
+  
+        if (pageItem.blank) {
+          Zip.file(
+            `OEBPS/text/p_${numStr}.xhtml`,
+            templatePageXhtml
+              .replace('{{title}}', bookTitle)
+              .replace(new RegExp('{{width}}', 'gm'), viewPortWidth)
+              .replace(new RegExp('{{height}}', 'gm'), viewPortHeight)
+              .replace('{{image}}', '')
+          )
+          return
+        }
+  
+        let par = 'none'
+        if (fitMode !== 'stretch') {
+          par = this.book.pagePosition === 'center'
+            ? 'xMidYMid '
+            : this.book.pageDirection === 'left'
+              ? (i + 1) % 2 === 1 ? 'xMaxYMid ' : 'xMinYMid '
+              : (i + 1) % 2 === 1 ? 'xMinYMid ' : 'xMaxYMid '
+      
+          if (fitMode === 'fit') {
+            par += 'meet'
+          } else { // props.imageFit === 'fill'
+            par += 'slice'
+          }
+        }
+  
         Zip.file(
           `OEBPS/text/p_${numStr}.xhtml`,
           templatePageXhtml
             .replace('{{title}}', bookTitle)
             .replace(new RegExp('{{width}}', 'gm'), viewPortWidth)
             .replace(new RegExp('{{height}}', 'gm'), viewPortHeight)
-            .replace('{{image}}', '')
+            .replace('{{image}}', `<image width="100%" height="100%" preserveAspectRatio="${par}" xlink:href="../image/${imageFileName}" />`)
         )
-        return
-      }
+  
+        Zip.file(`OEBPS/image/${imageFileName}`, blob)
+      })
+    } else { // this.book.imgTag === 'img'
+      this.book.pages.forEach((pageItem, i) => {
+        const numStr = i === 0 ? 'cover' : getNumberStr(i - 1, 4)
+        const blob = this.blobs.blobs[pageItem.blobID].blob
+        const mimeType = blob.type.slice(6)
+        const imageFileName = (i === 0 ? '' : 'i_') + numStr + '.' + mimeType
 
-      const blob = this.blobs.blobs[pageItem.blobID].blob
-      const mimeType = blob.type.slice(6)
-      const imageFileName = (i === 0 ? '' : 'i_') + numStr + '.' + mimeType
-
-      let par = 'none'
-      if (fitMode !== 'stretch') {
-        par = this.book.pagePosition === 'center'
-          ? 'xMidYMid '
-          : this.book.pageDirection === 'left'
-            ? (i + 1) % 2 === 1 ? 'xMaxYMid ' : 'xMinYMid '
-            : (i + 1) % 2 === 1 ? 'xMinYMid ' : 'xMaxYMid '
-    
-        if (fitMode === 'fit') {
-          par += 'meet'
-        } else { // props.imageFit === 'fill'
-          par += 'slice'
+        if (pageItem.blank) {
+          Zip.file(
+            `OEBPS/text/p_${numStr}.xhtml`,
+            templatePageImgXhtml
+              .replace('{{title}}', bookTitle)
+              .replace(new RegExp('{{width}}', 'gm'), viewPortWidth)
+              .replace(new RegExp('{{height}}', 'gm'), viewPortHeight)
+              .replace(`<img src="{{imageSource}}" style="{{style}}"/>`, '<div style="width:100%;height:100%;"></div>')
+          )
+          return
         }
-      }
 
-      Zip.file(
-        `OEBPS/text/p_${numStr}.xhtml`,
-        templatePageXhtml
-          .replace('{{title}}', bookTitle)
-          .replace(new RegExp('{{width}}', 'gm'), viewPortWidth)
-          .replace(new RegExp('{{height}}', 'gm'), viewPortHeight)
-          .replace('{{image}}', `<image width="100%" height="100%" preserveAspectRatio="${par}" xlink:href="../image/${imageFileName}" />`)
-      )
+        let imgStyle = 'object-fit:fill'
+        if (fitMode !== 'stretch') {
+          imgStyle = 'object-position:'
 
-      Zip.file(`OEBPS/image/${imageFileName}`, blob)
-    })
+          imgStyle += (
+            this.book.pagePosition === 'center'
+              ? 'center;'
+              : this.book.pageDirection === 'left'
+                ? (i + 1) % 2 === 1 ? 'right;' : 'left;'
+                : (i + 1) % 2 === 1 ? 'left;' : 'right;'
+          )
+
+          if (fitMode === 'fit') {
+            imgStyle += 'object-fit:contain'
+          } else { // props.imageFit === 'fill'
+            imgStyle += 'object-fit:cover'
+          }
+        }
+
+        Zip.file(
+          `OEBPS/text/p_${numStr}.xhtml`,
+          templatePageImgXhtml
+            .replace('{{title}}', bookTitle)
+            .replace(new RegExp('{{width}}', 'gm'), viewPortWidth)
+            .replace(new RegExp('{{height}}', 'gm'), viewPortHeight)
+            .replace('{{imageSource}}', `../image/${imageFileName}`)
+            .replace('{{style}}', imgStyle)
+        )
+  
+        Zip.file(`OEBPS/image/${imageFileName}`, blob)
+      })
+    }
 
     let authorsStr = this.book.bookAuthors.map((name, i) => {
       return [
