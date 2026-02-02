@@ -51,7 +51,7 @@ const ModalBook = observer(function() {
 
   const keywordsLength = keywords.length
 
-  const onClickModal = useCallback((e) => {
+  const onClickModal = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     return
   }, [])
@@ -369,7 +369,7 @@ const ModalContents = observer(function() {
   const [selectedSetIndex, setSelectedSetIndex] = useState(-1)
   const maxIndex = tempList.length - 1
 
-  const onClickModal = useCallback((e) => {
+  const onClickModal = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     return
   }, [])
@@ -638,7 +638,7 @@ const ModalPage = observer(function() {
   const store = React.useContext(React.createContext(storeMain.ui))
   const storeBook = React.useContext(React.createContext(storeMain.book))
 
-  const onClickModal = useCallback((e) => {
+  const onClickModal = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     return
   }, [])
@@ -669,25 +669,25 @@ const ModalPage = observer(function() {
     let func = PAGE_SIZE[key]
     storeBook.updateBookPageProperty('pageSize', func())
   }, [storeBook])
-  const onChangePagePosition = useCallback((value) => {
+  const onChangePagePosition = useCallback((value: 'center' | 'between') => {
     storeBook.updateBookPageProperty('pagePosition', value)
   }, [storeBook])
-  const onChangePageShow = useCallback((value) => {
+  const onChangePageShow = useCallback((value: 'one' | 'two') => {
     storeBook.updateBookPageProperty('pageShow', value)
   }, [storeBook])
-  const onChangePageFit = useCallback((value) => {
+  const onChangePageFit = useCallback((value: 'stretch' | 'fit' | 'fill') => {
     storeBook.updateBookPageProperty('pageFit', value)
   }, [storeBook])
   // const onChangePageBackgroundColor = useCallback((value) => {
   //   storeBook.updateBookPageProperty('pageBackgroundColor', value)
   // }, [storeBook])
-  const onChangePageDirection = useCallback((value) => {
+  const onChangePageDirection = useCallback((value: 'left' | 'right') => {
     storeBook.updateBookPageProperty('pageDirection', value)
   }, [storeBook])
-  const onChangeCoverPosition = useCallback((value) => {
+  const onChangeCoverPosition = useCallback((value: 'first-page' | 'alone') => {
     storeBook.updateBookPageProperty('coverPosition', value)
   }, [storeBook])
-  const onChangeImageTag = useCallback((value) => {
+  const onChangeImageTag = useCallback((value: 'svg' | 'img') => {
     storeBook.updateBookPageProperty('imgTag', value)
   }, [storeBook])
 

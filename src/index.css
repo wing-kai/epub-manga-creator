@@ -3,13 +3,13 @@
   --card-box-margin: 7px;
 }
 
-html, body, #app {
+html, body, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
 
-body {
+#root {
   display: flex;
 }
 
